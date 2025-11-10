@@ -1,19 +1,25 @@
 import React from "react";
 import { Link } from "react-router";
 
-const Login = () => {
+const Register = () => {
   return (
-    <div className="mt-15 flex flex-col items-center py-7">
-      <h1 className="mb-10">Login Now</h1>
+    <div className="my-15 flex flex-col items-center py-7">
+      <h1 className="mb-10">Register Here</h1>
       <form>
         <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+          <label className="label">Name</label>
+          <input type="text" className="input" placeholder="Your Name" />
+
+          <label className="label">Photo URL</label>
+          <input type="text" className="input" placeholder="URL" />
+          
           <label className="label">Email</label>
           <input type="email" className="input" placeholder="Email" />
 
           <label className="label">Password</label>
           <input type="password" className="input" placeholder="Password" />
 
-          <button className="btn btn-neutral mt-4">Login</button>
+          <button className="btn btn-neutral mt-4">Register</button>
           <button className="btn bg-white text-black border-[#e5e5e5]">
             <svg
               aria-label="Google logo"
@@ -44,11 +50,16 @@ const Login = () => {
             </svg>
             Login with Google
           </button>
-          <p className="text-center">Don't have an account? <Link to={"/register"} className="text-blue-700">Register</Link></p>
+          <p className="text-center">
+            Already have an account?{" "}
+            <Link to={"/login"} className="text-blue-700">
+              Login
+            </Link>
+          </p>
         </fieldset>
       </form>
     </div>
   );
 };
 
-export default Login;
+export default Register;
