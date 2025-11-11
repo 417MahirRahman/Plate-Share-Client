@@ -35,9 +35,15 @@ export const router = createBrowserRouter([
           },
           {
             path: ":id",
-            Component: FoodDetails,
-            loader: async ({params}) => {
-              const res = await fetch(`http://localhost:3000/availableFoods/${params.id}`);
+            element: (
+              <PrivateRoute>
+                <FoodDetails></FoodDetails>
+              </PrivateRoute>
+            ),
+            loader: async ({ params }) => {
+              const res = await fetch(
+                `http://localhost:3000/availableFoods/${params.id}`
+              );
               const data = await res.json();
               return data;
             },

@@ -1,27 +1,20 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link, NavLink } from "react-router";
+import { AuthContext } from "../../Provider/AuthProvider";
+import Dropdown from "../../utilities/Dropdown";
 
 const NavBar = () => {
+
+  const { user } = useContext(AuthContext);
 
     const activeStyle = "text-red-500"
     const normalStyle = "text-green-500"
 
-  const link1 = (
+  const links = (
     <>
       <div className="flex gap-10">
         <NavLink className={activeStyle ? activeStyle : normalStyle}>Home</NavLink>
         <NavLink to={"/availableFoods"} className={activeStyle ? activeStyle : normalStyle}>Available Foods</NavLink>
-      </div>
-    </>
-  );
-
-  const link2 = (
-    <>
-      <div className="flex flex-col">
-        <NavLink>Add Food</NavLink>
-        <NavLink>Manage My Foods</NavLink>
-        <NavLink>My Food Requests</NavLink>
-        <NavLink>Logout</NavLink>
       </div>
     </>
   );
@@ -52,16 +45,28 @@ const NavBar = () => {
               tabIndex="-1"
               className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
             >
-              {link2}
+              {links}
             </ul>
           </div>
           <a className="btn btn-ghost text-xl">Plate Share</a>
         </div>
         <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal px-1">{link1}</ul>
+          <ul className="menu menu-horizontal px-1">{links}</ul>
         </div>
         <div className="navbar-end">
-          <Link to={"/login"} className="btn">Login</Link>
+          {user ? (
+            <div>
+              <Dropdown></Dropdown>
+            </div>
+          ) : (
+            <Link
+              to={"/login"}
+              className="btn bg-[#FACC15] border-none text-[#15803D]"
+            >
+              Login
+            </Link>
+          )}
+
         </div>
       </div>
     </div>
