@@ -5,11 +5,13 @@ import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import AddFood from "../pages/AddFood/AddFood";
 import PrivateRoute from "../Provider/PrivateRoute";
+import ErrorPage from "../pages/ErrorPage/ErrorPage";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    Component:Root,
+    Component: Root,
+    errorElement: <ErrorPage></ErrorPage>,
     children:[
       {
         index: true,
