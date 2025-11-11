@@ -7,33 +7,48 @@ import AddFood from "../pages/AddFood/AddFood";
 import PrivateRoute from "../Provider/PrivateRoute";
 import ErrorPage from "../pages/ErrorPage/ErrorPage";
 import AvailableFoods from "../pages/AvailableFood/AvailableFoods";
+import FoodDetails from "../pages/FoodDetails/FoodDetails";
+import AllFood from "../pages/AvailableFood/AllFood";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     Component: Root,
     errorElement: <ErrorPage></ErrorPage>,
-    children:[
+    children: [
       {
         index: true,
         Component: Home,
       },
       {
         path: "/availableFoods",
-        Component: AvailableFoods,
-        loader: async () => {
-          const res = await fetch("http://localhost:3000/availableFoods")
-          const data = res.json()
-          return data
-        }
+        Component: AllFood,
+        children: [
+          {
+            index: true,
+            Component: AvailableFoods,
+            loader: async () => {
+              const res = await fetch("http://localhost:3000/availableFoods");
+              const data = await res.json();
+              return data;
+            },
+          },
+          {
+            path: ":id",
+            Component: FoodDetails,
+            loader: async ({params}) => {
+              const res = await fetch(`http://localhost:3000/availableFoods/${params.id}`);
+              const data = await res.json();
+              return data;
+            },
+          },
+        ],
       },
       {
         path: "/addFood",
-        element: <AddFood></AddFood>
+        element: <AddFood></AddFood>,
       },
-      {
-
-      },
+      {},
       {
         path: "/login",
         Component: Login,
@@ -41,7 +56,7 @@ export const router = createBrowserRouter([
       {
         path: "/register",
         Component: Register,
-      }
-    ] 
+      },
+    ],
   },
 ]);

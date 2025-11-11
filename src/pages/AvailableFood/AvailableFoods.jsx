@@ -1,5 +1,5 @@
 import React from "react";
-import { useLoaderData } from "react-router";
+import { Link, useLoaderData } from "react-router";
 
 const AvailableFoods = () => {
   const foods = useLoaderData();
@@ -9,7 +9,7 @@ const AvailableFoods = () => {
       <h1>ALL FOODS</h1>
       <div className="grid grid-cols-3 gap-5">
         {foods.map((food) => (
-          <div>
+          <div key={food._id}>
             <div className="card bg-base-100 w-full shadow-sm">
               <figure className="px-10 pt-10">
                 <img
@@ -25,7 +25,7 @@ const AvailableFoods = () => {
                   there are title and actions parts
                 </p>
                 <div className="card-actions">
-                  <button className="btn btn-primary">Buy Now</button>
+                  <Link to={`/availableFoods/${food._id}`} className="btn btn-primary">View Details</Link>
                 </div>
               </div>
             </div>
