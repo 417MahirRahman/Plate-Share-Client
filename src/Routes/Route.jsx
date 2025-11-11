@@ -6,6 +6,7 @@ import Register from "../pages/Register/Register";
 import AddFood from "../pages/AddFood/AddFood";
 import PrivateRoute from "../Provider/PrivateRoute";
 import ErrorPage from "../pages/ErrorPage/ErrorPage";
+import AvailableFoods from "../pages/AvailableFood/AvailableFoods";
 
 export const router = createBrowserRouter([
   {
@@ -18,8 +19,13 @@ export const router = createBrowserRouter([
         Component: Home,
       },
       {
-        path: "/availableFood",
-
+        path: "/availableFoods",
+        Component: AvailableFoods,
+        loader: async () => {
+          const res = await fetch("http://localhost:3000/availableFoods")
+          const data = res.json()
+          return data
+        }
       },
       {
         path: "/addFood",

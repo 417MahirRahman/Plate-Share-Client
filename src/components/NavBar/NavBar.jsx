@@ -10,7 +10,7 @@ const NavBar = () => {
     <>
       <div className="flex gap-10">
         <NavLink className={activeStyle ? activeStyle : normalStyle}>Home</NavLink>
-        <NavLink className={activeStyle ? activeStyle : normalStyle}>Available Foods</NavLink>
+        <NavLink to={"/availableFoods"} className={activeStyle ? activeStyle : normalStyle}>Available Foods</NavLink>
       </div>
     </>
   );
