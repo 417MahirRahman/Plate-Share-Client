@@ -1,118 +1,127 @@
-import React, { use, useState } from "react";
+import React, { useState, useContext } from "react"; 
 import { Link, useLocation, useNavigate } from "react-router";
 import { AuthContext } from "../../Provider/AuthProvider";
 import { Bounce, toast } from "react-toastify";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { FaEye } from "react-icons/fa";
-import { FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
 
 const Login = () => {
+  const [showPassword, setShowPassword] = useState(false);
 
-  const [showPassword, setShowPassword] = useState(false)
+  const { auth, login } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const provider = new GoogleAuthProvider();
 
-  const {auth, login} = use(AuthContext)
-  const navigate = useNavigate()
-  const location = useLocation()
-  const provider = new GoogleAuthProvider()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  const handleLogin = (e) => {
-    e.preventDefault()
-    const Form = e.target
-    const email = Form.email.value
-    const password = Form.password.value
-
-    login(email, password)
-    .then(()=>{
-      toast.success("Login Successfull",{
+  const loginMutation = useMutation({
+    mutationFn: async (data) => {
+      const { email, password } = data;
+      await login(email, password);
+    },
+    onSuccess: () => {
+      toast.success("Login Successful", {
         position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-      })
-      navigate(`${location.state ? location.state : "/"}`)
-    })
-    .catch((error) => {
-      const errorCode = error.code
-      const errorMessage = error.message
-      console.log(errorCode, errorMessage)
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      navigate(`${location.state ? location.state : "/"}`);
+    },
+    onError: () => {
       toast.error("Something went Wrong!", {
         position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-      })
-    })
-  }
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+    },
+  });
+
+  const handleLogin = (data) => {
+    loginMutation.mutate(data);
+  };
 
   const handleGoogleLogin = () => {
     signInWithPopup(auth, provider)
-    .then((result) => {
-      console.log(result);
+      .then((result) => {
+        console.log(result);
         navigate(`${location.state ? location.state : "/"}`);
         toast.success("Login Successful", {
           position: "top-right",
           autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
           theme: "light",
           transition: Bounce,
         });
-    })
-    .catch((error) => {
-      const errorCode = error.code
-      const errorMessage = error.message;
-        console.log(errorCode, errorMessage)
+      })
+      .catch((error) => {
+        console.log(error.code, error.message);
         toast.error("Something went Wrong", {
           position: "top-right",
           autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
           theme: "light",
           transition: Bounce,
         });
-    })
-  }
+      });
+  };
 
   const togglePassword = (e) => {
-    e.preventDefault()
-    setShowPassword(!showPassword)
-  }
+    e.preventDefault();
+    setShowPassword(!showPassword);
+  };
 
   return (
     <div className="mt-15 flex flex-col items-center py-7">
       <h1 className="mb-10">Login Now</h1>
-      <form onSubmit={handleLogin}>
+
+      <form onSubmit={handleSubmit(handleLogin)}>
         <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
           <label className="label">Email</label>
-          <input name="email" type="email" className="input" placeholder="Email" required/>
+          <input
+            type="email"
+            className="input"
+            placeholder="Email"
+            {...register("email", { required: "Email is required" })}
+          />
+          {errors.email && (
+            <p className="text-red-500 text-sm">{errors.email.message}</p>
+          )}
 
           <label className="label">Password</label>
           <div className="relative">
-            <input name="password" type={showPassword ? "text" : "password"} className="input" placeholder="Password" required/>
-
-            <button onClick={togglePassword} className="absolute top-4 right-3 cursor-pointer">
+            <input
+              type={showPassword ? "text" : "password"}
+              className="input"
+              placeholder="Password"
+              {...register("password", { required: "Password is required" })}
+            />
+            <button
+              onClick={togglePassword}
+              className="absolute top-4 right-3 cursor-pointer"
+            >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
+          {errors.password && (
+            <p className="text-red-500 text-sm">{errors.password.message}</p>
+          )}
 
-          <button className="btn btn-neutral mt-4">Login</button>
-          <button onClick={handleGoogleLogin} className="btn bg-white text-black border-[#e5e5e5]">
+          <button type="submit" className="btn btn-neutral mt-4">
+            Login
+          </button>
+
+          <button
+            onClick={handleGoogleLogin}
+            type="button"
+            className="btn bg-white text-black border-[#e5e5e5]"
+          >
             <svg
               aria-label="Google logo"
               width="16"
@@ -142,7 +151,13 @@ const Login = () => {
             </svg>
             Login with Google
           </button>
-          <p className="text-center">Don't have an account? <Link to={"/register"} className="text-blue-700">Register</Link></p>
+
+          <p className="text-center mt-2">
+            Don't have an account?{" "}
+            <Link to={"/register"} className="text-blue-700">
+              Register
+            </Link>
+          </p>
         </fieldset>
       </form>
     </div>

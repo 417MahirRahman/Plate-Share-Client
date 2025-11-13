@@ -1,14 +1,30 @@
-import React from "react";
-import { Link, useLoaderData } from "react-router";
+import React, { use, useEffect, useState } from "react";
+import { Link } from "react-router";
+import { AuthContext } from "../../Provider/AuthProvider";
+import Loader from "../../utilities/Loader";
 
 const AvailableFoods = () => {
-  const foods = useLoaderData();
+  const { user, loading } = use(AuthContext);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/availableFoods")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setData(data);
+      });
+  }, []);
+
+  if (loading) {
+    return <Loader></Loader>;
+  }
 
   return (
     <div>
-      <h1>ALL FOODS</h1>
+      <h1 className="text-center">ALL FOODS</h1>
       <div className="grid grid-cols-3 gap-5">
-        {foods.map((food) => (
+        {data.map((food) => (
           <div key={food._id}>
             <div className="card bg-base-100 w-full shadow-sm">
               <figure className="px-10 pt-10">
@@ -18,14 +34,24 @@ const AvailableFoods = () => {
                   className="rounded-xl"
                 />
               </figure>
-              <div className="card-body items-center text-center">
+              <div className="card-body">
+                <div className="flex items-center gap-2">
+                  <div className="avatar">
+                    <div className="ring-primary ring-offset-base-100 w-6 rounded-full ring-2 ring-offset-2"></div>
+                  </div>
+                  <h1>{user.displayName}</h1>
+                </div>
                 <h2 className="card-title">{food.foodName}</h2>
-                <p>
-                  A card component has a figure, a body part, and inside body
-                  there are title and actions parts
-                </p>
+                <h2>Quantity: {food.quantity}</h2>
+                <h2>Expire Date: {food.expireDate}</h2>
+                <h2>Pickup Location: {food.pickupLocation}</h2>
                 <div className="card-actions">
-                  <Link to={`/availableFoods/${food._id}`} className="btn btn-primary">View Details</Link>
+                  <Link
+                    to={`/availableFoods/${food._id}`}
+                    className="btn btn-primary"
+                  >
+                    View Details
+                  </Link>
                 </div>
               </div>
             </div>

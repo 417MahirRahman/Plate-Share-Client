@@ -9,6 +9,7 @@ import ErrorPage from "../pages/ErrorPage/ErrorPage";
 import AvailableFoods from "../pages/AvailableFood/AvailableFoods";
 import FoodDetails from "../pages/FoodDetails/FoodDetails";
 import AllFood from "../pages/AvailableFood/AllFood";
+import MyFoods from "../pages/MyFoods/MyFoods";
 
 export const router = createBrowserRouter([
   {
@@ -27,11 +28,6 @@ export const router = createBrowserRouter([
           {
             index: true,
             Component: AvailableFoods,
-            loader: async () => {
-              const res = await fetch("http://localhost:3000/availableFoods");
-              const data = await res.json();
-              return data;
-            },
           },
           {
             path: ":id",
@@ -52,9 +48,24 @@ export const router = createBrowserRouter([
       },
       {
         path: "/addFood",
-        element: <AddFood></AddFood>,
+        element: (
+          <PrivateRoute>
+            <AddFood></AddFood>
+          </PrivateRoute>
+        ),
       },
-      {},
+      {
+        path: "/myFood",
+        element: (
+          <PrivateRoute>
+            <MyFoods></MyFoods>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/myFoodReq",
+        element: <PrivateRoute></PrivateRoute>,
+      },
       {
         path: "/login",
         Component: Login,

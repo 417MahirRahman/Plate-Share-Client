@@ -1,73 +1,76 @@
-import React, { use, useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router";
-import { FaEye } from "react-icons/fa";
-import { FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { AuthContext } from "../../Provider/AuthProvider";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { Bounce, toast } from "react-toastify";
 import { PasswordValidation } from "../../utilities/Validation";
+import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
 
-  const { auth, createUser, updateUser, setUser } = use(AuthContext);
+  const { auth, createUser, updateUser, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const provider = new GoogleAuthProvider();
 
-  const handleRegister = (e) => {
-    e.preventDefault();
-    const Form = e.target;
-    const name = Form.name.value;
-    const image = Form.URL.value;
-    const email = Form.email.value;
-    const password = Form.password.value;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
 
-    const validPassword = PasswordValidation(password);
-    if (validPassword) {
-      setError(validPassword)
-      return
-    }
+  const registerMutation = useMutation({
+    mutationFn: async (data) => {
+      const { name, Image_URL, email, password } = data;
 
-    createUser(email, password)
-      .then((result) => {
-        const user = result.user;
-        updateUser({ displayName: name, PhotoURL: image })
-          .then(() => {
-            setUser({ ...user, displayName: name, PhotoURL: image });
-          })
-          .catch((error) => {
-            console.log(error);
-            setUser(user);
-          });
-        navigate("/");
-        toast.success("Account Created Successfully", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
-        console.log(errorMessage);
-        toast.error(`Invalid Information`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+      const validPassword = PasswordValidation(password);
+      if (validPassword) {
+        throw new Error(validPassword);
+      }
+
+      const result = await createUser(email, password);
+      const user = result.user;
+      await updateUser({ displayName: name, photoURL: Image_URL });
+
+      setUser({ ...user, displayName: name, photoURL: Image_URL });
+      return user;
+    },
+    onSuccess: () => {
+      navigate("/");
+      toast.success("Account Created Successfully", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
       });
+      reset();
+    },
+    onError: (error) => {
+      console.log(error.message);
+      toast.error(`${error.message || "Invalid Information"}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    },
+  });
+
+  const handleRegister = (data) => {
+    registerMutation.mutate(data);
   };
 
   const handleGoogleLogin = () => {
@@ -88,12 +91,11 @@ const Register = () => {
         });
       })
       .catch((error) => {
-        const errorMessage = error.message;
-        console.log(errorMessage);
+        console.log(error.message);
       });
   };
 
-  const toggolePassword = (e) => {
+  const togglePassword = (e) => {
     e.preventDefault();
     setShowPassword(!showPassword);
   };
@@ -101,58 +103,74 @@ const Register = () => {
   return (
     <div className="my-15 flex flex-col items-center py-7">
       <h1 className="mb-10">Register Here</h1>
-      <form onSubmit={handleRegister}>
+
+      <form
+        onSubmit={() => {
+          handleSubmit(handleRegister);
+        }}
+      >
         <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
           <label className="label">Name</label>
           <input
-            name="name"
             type="text"
             className="input"
             placeholder="Your Name"
-            required
+            {...register("name", { required: "Name is required" })}
           />
+          {errors.name && (
+            <p className="text-red-500 text-sm">{errors.name.message}</p>
+          )}
 
           <label className="label">Photo URL</label>
           <input
-            name="URL"
             type="text"
             className="input"
-            placeholder="URL"
-            required
+            placeholder="Image-URL"
+            {...register("Image_URL", { required: "Image URL is required" })}
           />
+          {errors.Image_URL && (
+            <p className="text-red-500 text-sm">{errors.Image_URL.message}</p>
+          )}
 
           <label className="label">Email</label>
           <input
-            name="email"
             type="email"
             className="input"
             placeholder="Email"
-            required
+            {...register("email", { required: "Email is required" })}
           />
+          {errors.email && (
+            <p className="text-red-500 text-sm">{errors.email.message}</p>
+          )}
 
           <label className="label">Password</label>
           <div className="relative">
             <input
-              name="password"
               type={showPassword ? "text" : "password"}
               className="input"
               placeholder="Password"
-              required
+              {...register("password", {
+                required: "Password is required",
+              })}
             />
-
             <button
-              onClick={toggolePassword}
+              onClick={togglePassword}
               className="absolute top-4 right-3 cursor-pointer"
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
+          {errors.password && (
+            <p className="text-red-500 text-sm">{errors.password.message}</p>
+          )}
+          
+          <button type="submit" className="btn btn-neutral mt-4">
+            Register
+          </button>
 
-          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-
-          <button className="btn btn-neutral mt-4">Register</button>
           <button
             onClick={handleGoogleLogin}
+            type="button"
             className="btn bg-white text-black border-[#e5e5e5]"
           >
             <svg
@@ -184,7 +202,8 @@ const Register = () => {
             </svg>
             Login with Google
           </button>
-          <p className="text-center">
+
+          <p className="text-center mt-2">
             Already have an account?{" "}
             <Link to={"/login"} className="text-blue-700">
               Login
