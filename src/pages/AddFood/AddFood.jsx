@@ -17,7 +17,9 @@ const AddFood = () => {
     mutationFn: async (formData) => {
       const res = await fetch("http://localhost:3000/availableFoods", {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: { "content-type": "application/json",
+          authorization: `Bearer ${user.accessToken}`
+         },
         body: JSON.stringify(formData),
       });
       return res.json();

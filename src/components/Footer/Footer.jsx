@@ -5,7 +5,7 @@ const Footer = () => {
     <div>
       <footer className="footer footer-horizontal footer-center bg-[#FDEBD0] text-[#DC143C] p-5">
         <aside>
-          <img className="w-sm lg:w-lg" src="https://i.ibb.co.com/xSTHvjXJ/logo-1-Picsart-Background-Remover-1.png" alt="" />
+          <img className="w-sm lg:w-lg" src="https://i.ibb.co.com/whJDpkCy/png-Picsart-Background-Remover.png" alt="" />
           <p className="font-bold">
             ACME Industries Ltd.
             <br />

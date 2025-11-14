@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../Provider/AuthProvider";
 import Loader from "../../utilities/Loader";
 import Swal from "sweetalert2";
@@ -6,109 +6,110 @@ import { Link } from "react-router";
 import { useForm } from "react-hook-form";
 
 const MyFoods = () => {
-  const { user, loading, setLoading } = use(AuthContext);
+  const { user, loading, setLoading } = useContext(AuthContext);
   const [data, setData] = useState([]);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const [selectedFood, setSelectedFood] = useState(null);
+
+  const { register, handleSubmit, setValue, reset } = useForm();
 
   useEffect(() => {
-    fetch(`http://localhost:3000/myFood?email=${user.email}`)
+    fetch(`http://localhost:3000/myFood?email=${user.email}`, {
+      headers: {
+        authorization: `Bearer ${user.accessToken}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setData(data);
         setLoading(false);
       });
   }, [user.email, setLoading]);
 
-  if (loading) {
-    return <Loader></Loader>;
-  }
+  if (loading) return <Loader />;
+
+  const openModal = (food) => {
+    setSelectedFood(food);
+    setValue("foodName", food.foodName);
+    setValue("foodImage", food.foodImage);
+    setValue("quantity", food.quantity);
+    setValue("pickupLocation", food.pickupLocation);
+    setValue("expireDate", food.expireDate);
+    setValue("additionalNote", food.additionalNote);
+
+    document.getElementById(`modal_${food._id}`).showModal();
+  };
 
   const handleUpdateBtn = (id, formData) => {
     fetch(`http://localhost:3000/availableFoods/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        authorization: `Bearer ${user.accessToken}`,
       },
       body: JSON.stringify(formData),
     })
       .then((res) => res.json())
       .then((updatedFood) => {
-        console.log("Updated food:", updatedFood);
         setData((prevData) =>
           prevData.map((food) =>
             food._id === id ? { ...food, ...updatedFood } : food
           )
         );
+
         Swal.fire({
           title: "Updated!",
-          text: "Food details have been updated successfully.",
+          text: "Food details updated successfully.",
           icon: "success",
         });
         document.getElementById(`modal_${id}`).close();
-        window.location.reload();
-      })
-      .catch((err) => {
-        console.error(err);
-        Swal.fire({
-          title: "Error!",
-          text: "Something went wrong while updating.",
-          icon: "error",
-        });
+        reset();
+        setSelectedFood(null);
       });
   };
 
   const handleDeleteBtn = (id) => {
     Swal.fire({
       title: "Are you sure?",
-      text: "You won't be able to revert this!",
+      text: "This action cannot be undone!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
         fetch(`http://localhost:3000/availableFoods/${id}`, {
           method: "DELETE",
           headers: {
-            "Content-Type": "application/json",
+            authorization: `Bearer ${user.accessToken}`,
           },
         })
           .then((res) => res.json())
-          .then((data) => {
-            console.log(data);
-            Swal.fire({
-              title: "Deleted!",
-              text: "Your file has been deleted.",
-              icon: "success",
-            });
+          .then(() => {
             setData((prev) => prev.filter((food) => food._id !== id));
-          })
-          .catch((err) => console.log(err));
+            Swal.fire("Deleted!", "Food has been removed.", "success");
+          });
       }
     });
   };
 
   return (
-    <div>
-      <h1 className="text-center font-bold text-white my-5 lg:my-10 text-2xl md:text-3xl lg:text-5xl">My Foods</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 p-3 lg:p-10">
+    <div className="mb-20">
+      <h1 className="text-center font-bold text-white my-10 text-5xl">
+        My Foods
+      </h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-3 lg:p-5 xl:p-7 gap-10 lg:gap-15 py-5">
         {data.map((food) => (
           <div key={food._id}>
-            <div className="card card-xs py-3 bg-base-100 w-full hover:shadow-2xl">
-              <figure className="px-10 pt-10">
+            <div className="card bg-base-100 w-full lg:w-11/12 lg:mx-auto shadow-lg hover:shadow-2xl">
+              <figure className="p-7">
                 <img
                   src={food.foodImage}
-                  alt="Shoes"
-                  className="rounded-xl"
+                  className="w-full h-[150px] lg:h-[250px] rounded-4xl"
+                  alt=""
                 />
               </figure>
+
               <div className="card-body px-10 mt-5">
                 <div className="flex items-center gap-2">
                   <div className="avatar">
@@ -118,163 +119,132 @@ const MyFoods = () => {
                   </div>
                   <h1 className="font-bold text-xl">{food.donatorName}</h1>
                 </div>
-                <h2 className="card-title font-bold text-lg">{food.foodName}</h2>
+                <h2 className="card-title font-bold text-lg">
+                  {food.foodName}
+                </h2>
                 <h2 className="font-bold text-sm">Quantity: {food.quantity}</h2>
-                <h2 className="font-bold text-sm">Expire Date: {food.expireDate}</h2>
-                <h2 className="font-bold text-sm">Pickup Location: {food.pickupLocation}</h2>
-                <div className="card-actions gap-5">
+                <h2 className="font-bold text-sm">
+                  Expire Date: {food.expireDate}
+                </h2>
+                <h2 className="font-bold text-sm">
+                  Pickup Location: {food.pickupLocation}
+                </h2>
+
+                <div className="card-actions gap-5 mt-4">
                   <Link
                     to={`/availableFoods/${food._id}`}
                     className="btn bg-[#DC143C] text-white font-bold rounded-xl"
                   >
                     View Details
                   </Link>
+
                   <button
                     className="btn bg-[#DC143C] text-white font-bold rounded-xl"
-                    onClick={() =>
-                      document.getElementById(`modal_${food._id}`).showModal()
-                    }
+                    onClick={() => openModal(food)}
                   >
                     Update
                   </button>
+
                   <button
-                    onClick={() => {
-                      handleDeleteBtn(food._id);
-                    }}
                     className="btn bg-[#DC143C] text-white font-bold rounded-xl"
+                    onClick={() => handleDeleteBtn(food._id)}
                   >
                     Delete
                   </button>
+                </div>
 
-                  {/* modal */}
-                  {
-                    <dialog id={`modal_${food._id}`} className="modal">
-                      <form onSubmit={handleSubmit((formData) => handleUpdateBtn(food._id, formData))}>
-                        <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-                          <label className="label">Donator Name</label>
-                          <input
-                            type="text"
-                            className="input border-2 border-black"
-                            defaultValue={user.displayName}
-                          />
+                {/* Modal */}
+                {selectedFood && (
+                  <div
+                    className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50"
+                    onClick={() => setSelectedFood(null)}
+                  >
+                    <div
+                      className="bg-white p-6 rounded-xl shadow-xl w-[90%] max-w-md animate-fadeIn"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <h3 className="text-2xl font-bold mb-4 text-center">
+                        Update Food
+                      </h3>
 
-                          <label className="label">Email</label>
-                          <input
-                            type="text"
-                            className="input border-2 border-black"
-                            defaultValue={user.email}
-                          />
+                      <form
+                        onSubmit={handleSubmit((formData) =>
+                          handleUpdateBtn(selectedFood._id, formData)
+                        )}
+                        className="space-y-3"
+                      >
+                        <input
+                          readOnly
+                          value={user.displayName}
+                          className="input input-bordered w-full"
+                        />
 
-                          <label className="label">Food Name</label>
-                          <input
-                            {...register("foodName", {
-                              required: "Food name is required",
-                            })}
-                            type="text"
-                            className="input"
-                            placeholder="Food-Name"
-                            defaultValue={food.foodName}
-                          />
-                          {errors.foodname && (
-                            <p className="text-red-500 text-sm">
-                              {errors.foodname.message}
-                            </p>
-                          )}
+                        <input
+                          readOnly
+                          value={user.email}
+                          className="input input-bordered w-full"
+                        />
 
-                          <label className="label">Food Image</label>
-                          <input
-                            {...register("foodImage", {
-                              required: "Image URL is required",
-                            })}
-                            type="text"
-                            className="input"
-                            placeholder="Image-URL"
-                            defaultValue={food.foodImage}
-                          />
-                          {errors.foodImage && (
-                            <p className="text-red-500 text-sm">
-                              {errors.foodImage.message}
-                            </p>
-                          )}
+                        <input
+                          {...register("foodName", { required: true })}
+                          className="input input-bordered w-full"
+                          placeholder="Food Name"
+                        />
 
-                          <label className="label">Food Quantity</label>
-                          <input
-                            {...register("quantity", {
-                              required: "Quantity is required",
-                            })}
-                            type="number"
-                            className="input"
-                            placeholder="Quantity"
-                            defaultValue={food.quantity}
-                          />
-                          {errors.quantity && (
-                            <p className="text-red-500 text-sm">
-                              {errors.quantity.message}
-                            </p>
-                          )}
+                        <input
+                          {...register("foodImage", { required: true })}
+                          className="input input-bordered w-full"
+                          placeholder="Food Image URL"
+                        />
 
-                          <label className="label">Food Status</label>
-                          <input
-                            type="text"
-                            className="input"
-                            defaultValue={"Available"}
-                          />
+                        <input
+                          {...register("quantity", { required: true })}
+                          className="input input-bordered w-full"
+                          type="number"
+                          placeholder="Quantity"
+                        />
 
-                          <label className="label">Pickup Location</label>
-                          <input
-                            {...register("pickupLocation", {
-                              required: "Pickup location is required",
-                            })}
-                            type="text"
-                            className="input"
-                            placeholder="#Road-9"
-                            defaultValue={food.pickupLocation}
-                          />
-                          {errors.pickupLocation && (
-                            <p className="text-red-500 text-sm">
-                              {errors.pickupLocation.message}
-                            </p>
-                          )}
+                        <input
+                          {...register("pickupLocation", { required: true })}
+                          className="input input-bordered w-full"
+                          placeholder="Pickup Location"
+                        />
 
-                          <label className="label">Expire Date</label>
-                          <input
-                            {...register("expireDate", {
-                              required: "Expire date is required",
-                            })}
-                            type="date"
-                            defaultValue={food.expireDate}
-                          />
-                          {errors.expireDate && (
-                            <p className="text-red-500 text-sm">
-                              {errors.expireDate.message}
-                            </p>
-                          )}
+                        <input
+                          {...register("expireDate", { required: true })}
+                          type="date"
+                          className="input input-bordered w-full"
+                        />
 
-                          <label className="label">Additional Notes</label>
-                          <textarea
-                            {...register("additionalNote")}
-                            className="textarea"
-                            placeholder="Type here..."
-                            defaultValue={food.additionalNote}
-                          ></textarea>
+                        <textarea
+                          {...register("additionalNote")}
+                          className="textarea textarea-bordered w-full"
+                          placeholder="Additional Notes"
+                        />
 
-                          <button className="btn">Update Info</button>
+                        <div className="flex justify-between pt-3">
+                          <button
+                            type="submit"
+                            className="btn bg-[#DC143C] text-white w-1/2 mr-2"
+                          >
+                            Update
+                          </button>
+
                           <button
                             type="button"
-                            className="btn"
-                            onClick={() =>
-                              document
-                                .getElementById(`modal_${food._id}`)
-                                .close()
-                            }
+                            className="btn w-1/2"
+                            onClick={() => {
+                              setSelectedFood(null);
+                              window.location.reload();
+                            }}
                           >
                             Close
                           </button>
-                        </fieldset>
+                        </div>
                       </form>
-                    </dialog>
-                  }
-                </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

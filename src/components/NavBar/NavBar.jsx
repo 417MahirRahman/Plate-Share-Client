@@ -6,8 +6,8 @@ import Dropdown from "../../utilities/Dropdown";
 const NavBar = () => {
   const { user } = useContext(AuthContext);
 
-  const activeStyle = "text-black lg:text-white font-bold text-lg";
-  const normalStyle = "text-black font-bold text-lg";
+  const activeStyle = "text-black lg:text-white font-bold text-2xl border-b-4 border-white";
+  const normalStyle = "text-white font-bold text-xl";
 
   const links = (
     <>
@@ -72,7 +72,7 @@ const NavBar = () => {
           ) : (
             <Link
               to={"/login"}
-              className="btn bg-[#FACC15] border-none text-[#15803D]"
+              className="btn btn-lg bg-white text-[#DC143C] font-bold rounded-xl border-none"
             >
               Login
             </Link>
