@@ -1,31 +1,31 @@
-import React, { use } from "react";
-import { Link } from "react-router";
+import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Provider/AuthProvider";
 import Loader from "../../utilities/Loader";
-import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router";
 
-const AvailableFoods = () => {
-  const { loading } = use(AuthContext);
+const DynamicFood = () => {
+  const { loading, setLoading } = useContext(AuthContext);
+  const [data, setData] = useState([]);
 
-  const { data: foods = [] } = useQuery({
-    queryKey: ["availableFoods"],
-    queryFn: async () => {
-      const res = await fetch("http://localhost:3000/availableFoods");
-      return res.json();
-    },
-  });
+  useEffect(() => {
+    fetch("http://localhost:3000/dynamicFood")
+      .then((res) => res.json())
+      .then((data) => {
+        setData(data);
+        console.log(data);
+        setLoading(false);
+      });
+  }, [setLoading]);
 
   if (loading) {
-    return <Loader />;
+    <Loader></Loader>;
   }
 
   return (
-    <div className="mb-20">
-      <h1 className="text-center font-bold text-white my-5 lg:my-10 text-2xl md:text-3xl lg:text-5xl">
-        ALL FOODS
-      </h1>
+    <div className="pb-20 p-2">
+      <h1 className="text-center font-bold text-white mt-10 mb-8 text-4xl">Our Most Served Food Items</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-3 lg:p-5 xl:p-7 gap-10 lg:gap-15 py-5">
-        {foods.map((food) => (
+        {data.map((food) => (
           <div
             key={food._id}
             className="card bg-base-100 w-full lg:w-11/12 lg:mx-auto shadow-lg hover:shadow-2xl"
@@ -66,8 +66,16 @@ const AvailableFoods = () => {
           </div>
         ))}
       </div>
+      <div className="flex items-center justify-center mt-10 mb-5">
+        <Link
+          to={"/availableFoods"}
+          className="btn md:btn-xl bg-[#DC143C] text-white font-bold rounded-xl border-none"
+        >
+          Show All
+        </Link>
+      </div>
     </div>
   );
 };
 
-export default AvailableFoods;
+export default DynamicFood;

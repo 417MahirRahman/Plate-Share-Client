@@ -101,19 +101,17 @@ const Register = () => {
   };
 
   return (
-    <div className="my-15 flex flex-col items-center py-7">
-      <h1 className="mb-10">Register Here</h1>
+    <div className="flex flex-col items-center py-7 mb-10">
+      <h1 className="text-center font-bold text-white mb-5 lg:my-10 text-2xl md:text-3xl lg:text-5xl">Register Here</h1>
 
       <form
-        onSubmit={() => {
-          handleSubmit(handleRegister);
-        }}
+        onSubmit={handleSubmit(handleRegister)}
       >
         <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-          <label className="label">Name</label>
+          <label className="label font-bold">Name</label>
           <input
             type="text"
-            className="input"
+            className="input w-full"
             placeholder="Your Name"
             {...register("name", { required: "Name is required" })}
           />
@@ -121,10 +119,10 @@ const Register = () => {
             <p className="text-red-500 text-sm">{errors.name.message}</p>
           )}
 
-          <label className="label">Photo URL</label>
+          <label className="label font-bold">Photo URL</label>
           <input
             type="text"
-            className="input"
+            className="input w-full"
             placeholder="Image-URL"
             {...register("Image_URL", { required: "Image URL is required" })}
           />
@@ -132,10 +130,10 @@ const Register = () => {
             <p className="text-red-500 text-sm">{errors.Image_URL.message}</p>
           )}
 
-          <label className="label">Email</label>
+          <label className="label font-bold">Email</label>
           <input
             type="email"
-            className="input"
+            className="input w-full"
             placeholder="Email"
             {...register("email", { required: "Email is required" })}
           />
@@ -143,11 +141,11 @@ const Register = () => {
             <p className="text-red-500 text-sm">{errors.email.message}</p>
           )}
 
-          <label className="label">Password</label>
+          <label className="label font-bold">Password</label>
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
-              className="input"
+              className="input w-full"
               placeholder="Password"
               {...register("password", {
                 required: "Password is required",
@@ -164,14 +162,14 @@ const Register = () => {
             <p className="text-red-500 text-sm">{errors.password.message}</p>
           )}
           
-          <button type="submit" className="btn btn-neutral mt-4">
+          <button type="submit" className="btn bg-[#DC143C] text-white font-bold rounded-xl">
             Register
           </button>
 
           <button
             onClick={handleGoogleLogin}
             type="button"
-            className="btn bg-white text-black border-[#e5e5e5]"
+            className="btn bg-white text-black border-[#e5e5e5] rounded-xl font-bold"
           >
             <svg
               aria-label="Google logo"
@@ -203,9 +201,9 @@ const Register = () => {
             Login with Google
           </button>
 
-          <p className="text-center mt-2">
+          <p className="text-center mt-2 font-bold">
             Already have an account?{" "}
-            <Link to={"/login"} className="text-blue-700">
+            <Link to={"/login"} className="text-red-700 font-bold">
               Login
             </Link>
           </p>

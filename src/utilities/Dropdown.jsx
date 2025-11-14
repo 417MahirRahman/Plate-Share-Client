@@ -49,13 +49,13 @@ const Dropdown = () => {
         </summary>
         <ul className="menu dropdown-content bg-base-100 rounded-box z-10 w-52 p-2 shadow-sm">
           <li>
-            <NavLink to={"/addFood"}>Add Food</NavLink>
-            <NavLink to={"/myFood"}>Manage My Foods</NavLink>
-            <NavLink to={"/myFoodReq"}>My Food Requests</NavLink>
+            <NavLink to={"/addFood"} className="text-black font-bold">Add Food</NavLink>
+            <NavLink to={"/myFood"} className="text-black font-bold">Manage My Foods</NavLink>
+            <NavLink to={"/myFoodReq"} className="text-black font-bold">My Food Requests</NavLink>
           </li>
           <li className="flex gap-1">
             <div>
-              <IoIosLogOut />
+              <IoIosLogOut className="text-black font-bold" />
               <Link
                 onClick={handleLogOut}
                 to={"/login"}

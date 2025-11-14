@@ -10,6 +10,7 @@ import AvailableFoods from "../pages/AvailableFood/AvailableFoods";
 import FoodDetails from "../pages/FoodDetails/FoodDetails";
 import AllFood from "../pages/AvailableFood/AllFood";
 import MyFoods from "../pages/MyFoods/MyFoods";
+import MyFoodReq from "../pages/MyFoodReq/MyFoodReq";
 
 export const router = createBrowserRouter([
   {
@@ -64,7 +65,9 @@ export const router = createBrowserRouter([
       },
       {
         path: "/myFoodReq",
-        element: <PrivateRoute></PrivateRoute>,
+        element: <PrivateRoute>
+          <MyFoodReq></MyFoodReq>
+        </PrivateRoute>,
       },
       {
         path: "/login",

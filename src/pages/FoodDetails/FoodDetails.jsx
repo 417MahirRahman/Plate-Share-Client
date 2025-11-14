@@ -1,13 +1,16 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useLoaderData } from "react-router";
 import { AuthContext } from "../../Provider/AuthProvider";
 import { useForm } from "react-hook-form";
 import { Bounce, toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
+import Loader from "../../utilities/Loader";
 
 const FoodDetails = () => {
-  const { user } = useContext(AuthContext);
+  const { user, setLoading } = useContext(AuthContext);
   const { food } = useLoaderData();
+  const [data, setData] = useState([]);
+  const [statusMap, setStatusMap] = useState({});
 
   const {
     register,
@@ -16,160 +19,254 @@ const FoodDetails = () => {
     formState: { errors },
   } = useForm();
 
+  useEffect(() => {
+    fetch(`http://localhost:3000/FoodRequest?email=${food.donatorEmail}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Fetched Data: ", data);
+        setData(data);
+        setLoading(false);
+      });
+  }, [food.donatorEmail, setLoading]);
+
   const addFoodMutation = useMutation({
-    mutationFn: async (formData) => {
-      const res = await fetch("http://localhost:3000/FoodRequest", {
+    mutationFn: (formData) =>
+      fetch("http://localhost:3000/FoodRequest", {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
-      });
-      return res.json();
-    },
+      }).then((res) => res.json()),
+
     onSuccess: () => {
-      toast.success("Request Sent Successfully", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
+      toast.success("Request Sent Successfully", { transition: Bounce });
       document.getElementById(`modal_${food._id}`).close();
       reset();
     },
-    onError: () => {
-      toast.error("Something went wrong!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
+    onError: () => toast.error("Something went wrong!", { transition: Bounce }),
+  });
+
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ id, formData }) =>
+      fetch(`http://localhost:3000/FoodRequest?id=${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      }).then((res) => res.json()),
+
+    onSuccess: (response, variables) => {
+      const { id } = variables;
+      if (response.updatedRequest) {
+        setStatusMap((prev) => ({
+          ...prev,
+          [id]: response.updatedRequest.foodStatus,
+        }));
+        toast.success(
+          `Status updated to ${response.updatedRequest.foodStatus}`
+        );
+      } else {
+        toast.error(response.message || "Update failed");
+      }
     },
   });
 
+  if (data.length === 0 && !setLoading) {
+    return <Loader />;
+  }
+
   const handleSubmitBtn = () => {
-    const formData = {
+    const requestData = {
       Name: user.displayName,
       Email: user.email,
       ImageURL: user.photoURL,
-      foodID:food._id,
-      foodStatus:"Available",
+      foodID: food._id,
+      foodname: food.foodName,
+      foodStatus: "Pending",
+      foodOwnerEmail: food.donatorEmail,
     };
-    addFoodMutation.mutate(formData);
+    addFoodMutation.mutate(requestData);
   };
 
+  const handleAccept = (id) => {
+    updateStatusMutation.mutate({ id, formData: { foodStatus: "Donated" } });
+  };
+
+  const handleReject = (id) => {
+    updateStatusMutation.mutate({ id, formData: { foodStatus: "Rejected" } });
+  };
+
+  const DATA = data.find((item) => item.foodID === food._id);
+  console.log(DATA);
+
   return (
-    <div>
-      <h1>FOOD Details</h1>
-      {/* Donator-Info */}
-      <div className="hero bg-base-200">
-        <div className="hero-content flex-col lg:flex-row">
+    <div className="pb-20 p-2">
+      <h1 className="text-center font-bold text-white mt-10 mb-8 text-4xl">
+        FOOD DETAILS
+      </h1>
+
+      {/* Donor Info */}
+      <div data-aos="flip-right" className="hero flex justify-start text-white bg-linear-to-r from-[#DC143C] to-white mt-10 w-full md:w-3/4 mx-auto rounded-xl shadow-2xl">
+        <div className="hero-content flex-col lg:flex-row gap-10">
           <img
-            src="https://img.daisyui.com/images/stock/photo-1635805737707-575885ab0820.webp"
+            src={food.donatorImage}
             className="max-w-sm rounded-lg shadow-2xl"
           />
           <div>
-            <h1 className="text-5xl font-bold">Box Office News!</h1>
-            <p className="py-6">
-              Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda
-              excepturi exercitationem quasi. In deleniti eaque aut repudiandae
-              et a id nisi.
-            </p>
+            <h1 className="text-2xl font-bold">{food.donatorName}</h1>
+            <h1 className="text-lg font-semibold">{food.donatorEmail}</h1>
           </div>
         </div>
       </div>
 
-      {/* Food-Info */}
-      <div className="hero bg-base-200">
-        <div className="hero-content flex-col lg:flex-row-reverse">
+      {/* Food Info */}
+      <div data-aos="flip-left" className="hero flex justify-end text-white bg-linear-to-r from-white to-[#DC143C] mt-10 w-full md:w-3/4 mx-auto rounded-xl shadow-2xl">
+        <div className="hero-content flex-col lg:flex-row-reverse gap-10">
           <img
-            src="https://img.daisyui.com/images/stock/photo-1635805737707-575885ab0820.webp"
+            src={food.foodImage}
             className="max-w-sm rounded-lg shadow-2xl"
           />
           <div>
-            <h1 className="text-5xl font-bold">{food.foodName}</h1>
-            <h1 className="text-xl font-bold">Quantity: {food.quantity}</h1>
-            <h1 className="text-xl font-bold">
-              Expire Date: {food.expireDate}
-            </h1>
-            <h1 className="text-xl font-bold">
+            <h1 className="text-3xl font-bold">{food.foodName}</h1>
+            <p className="font-semibold mt-2">Quantity: {food.quantity}</p>
+            <p className="font-semibold">Expire Date: {food.expireDate}</p>
+            <p className="font-semibold">
               Pickup Location: {food.pickupLocation}
-            </h1>
-            <p className="py-6">{food.additionalNote}</p>
+            </p>
+            <p className="py-4">{food.additionalNote}</p>
             <button
-              className="btn"
+              className="btn bg-[#DC143C] text-white font-bold rounded-xl border-none"
               onClick={() =>
                 document.getElementById(`modal_${food._id}`).showModal()
               }
             >
               Request Food
             </button>
-            {/* modal */}
-            {
-              <dialog id={`modal_${food._id}`} className="modal">
-                <form onSubmit={handleSubmit(handleSubmitBtn)}>
-                  <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-                    <label className="label">Location</label>
-                    <input
-                      {...register("Location", {
-                        required: "location is required",
-                      })}
-                      type="text"
-                      className="input"
-                      placeholder="#Road-9"
-                    />
-                    {errors.pickupLocation && (
-                      <p className="text-red-500 text-sm">
-                        {errors.Location.message}
-                      </p>
-                    )}
-
-                    <label className="label">Why Need Food?</label>
-                    <textarea
-                      {...register("WhyNeedFood")}
-                      className="textarea"
-                      placeholder="Type here..."
-                    ></textarea>
-
-                    <label className="label">Contact Number</label>
-                    <input
-                      {...register("ContactNumber", {
-                        required: "Contact Number is required",
-                      })}
-                      type="number"
-                      className="input"
-                      placeholder="01****"
-                      defaultValue={food.quantity}
-                    />
-                    {errors.quantity && (
-                      <p className="text-red-500 text-sm">
-                        {errors.quantity.message}
-                      </p>
-                    )}
-
-                    <button className="btn">Submit Request</button>
-                    <button
-                      type="button"
-                      className="btn"
-                      onClick={() =>
-                        document.getElementById(`modal_${food._id}`).close()
-                      }
-                    >
-                      Close
-                    </button>
-                  </fieldset>
-                </form>
-              </dialog>
-            }
           </div>
+        </div>
+      </div>
+
+      {/* Modal */}
+      <dialog id={`modal_${food._id}`} className="modal">
+        <form
+          onSubmit={handleSubmit(handleSubmitBtn)}
+          className="modal-box bg-white text-black"
+        >
+          <h3 className="font-bold text-lg mb-4 text-center">Request Food</h3>
+
+          <label className="label">Location</label>
+          <input
+            {...register("Location", { required: "Location is required" })}
+            type="text"
+            className="input input-bordered w-full"
+            placeholder="#Road-9"
+          />
+          {errors.Location && (
+            <p className="text-red-500">{errors.Location.message}</p>
+          )}
+
+          <label className="label mt-3">Why Need Food?</label>
+          <textarea
+            {...register("WhyNeedFood")}
+            className="textarea textarea-bordered w-full"
+          ></textarea>
+
+          <label className="label mt-3">Contact Number</label>
+          <input
+            {...register("ContactNumber", {
+              required: "Contact Number is required",
+            })}
+            type="number"
+            className="input input-bordered w-full"
+            placeholder="01****"
+          />
+          {errors.ContactNumber && (
+            <p className="text-red-500">{errors.ContactNumber.message}</p>
+          )}
+
+          <div className="flex justify-end gap-3 mt-6">
+            <button className="btn bg-[#DC143C] text-white">Submit</button>
+            <button
+              type="button"
+              className="btn"
+              onClick={() =>
+                document.getElementById(`modal_${food._id}`).close()
+              }
+            >
+              Close
+            </button>
+          </div>
+        </form>
+      </dialog>
+
+      {/* Food Requests Table */}
+      <div className="w-full md:w-3/4 lg:w-1/2 mx-auto mt-10">
+        <div className="bg-white shadow-xl rounded-xl overflow-hidden">
+          <h2 className="text-center bg-[#DC143C] text-white py-3 text-lg font-bold">
+            Food Requests
+          </h2>
+
+          {DATA?.foodID === food._id ? (
+            <div className="divide-y divide-gray-200">
+              {data.map((request) => {
+                const currentStatus =
+                  statusMap[request._id] || request.foodStatus;
+                return (
+                  <div
+                    key={request._id}
+                    className="flex flex-row items-center justify-between p-4 hover:bg-gray-50 transition"
+                  >
+                    <div className="flex items-center gap-1 md:gap-3 text-left">
+                      <div>
+                        <img
+                          className="w-12 h-12 rounded-full object-cover"
+                          src={request.ImageURL}
+                          alt="Profile"
+                        />
+                      </div>
+                      <div>
+                        <div className="font-semibold text-gray-800">
+                          <h1>{request.Name}</h1>
+                        </div>
+                        <div className="font-semibold text-gray-800">
+                          <h1>Requested Food: {food.foodName}</h1>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2 mt-3 sm:mt-0">
+                      {currentStatus === "Pending" && (
+                        <>
+                          <button
+                            onClick={() => handleAccept(request.foodID)}
+                            className="btn btn-sm bg-green-500 text-white hover:bg-green-600"
+                          >
+                            Accept
+                          </button>
+                          <button
+                            onClick={() => handleReject(request.foodID)}
+                            className="btn btn-sm bg-red-500 text-white hover:bg-red-600"
+                          >
+                            Reject
+                          </button>
+                        </>
+                      )}
+                      {currentStatus === "Donated" && (
+                        <span className="px-3 py-1 rounded bg-green-100 text-green-800 font-semibold text-sm">
+                          Accepted
+                        </span>
+                      )}
+                      {currentStatus === "Rejected" && (
+                        <span className="px-3 py-1 rounded bg-red-100 text-red-800 font-semibold text-sm">
+                          Rejected
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-center py-5 text-gray-600">No requests found.</p>
+          )}
         </div>
       </div>
     </div>

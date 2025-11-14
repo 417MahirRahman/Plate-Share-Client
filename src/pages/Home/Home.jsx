@@ -1,20 +1,18 @@
-import React, { use } from 'react';
-import { AuthContext } from '../../Provider/AuthProvider';
-import Loader from '../../utilities/Loader';
+import React from "react";
+import DynamicFood from "./DynamicFood";
+import HowItWork from "./HowItWork";
+import OurMissions from "./OurMissions";
+import Banner from "./Banner";
 
-const Home = () => {
-    const {user, loading} = use(AuthContext)
+function HomePage() {
+  return (
+    <div>
+      <Banner></Banner>
+      <DynamicFood></DynamicFood>
+      <HowItWork></HowItWork>
+      <OurMissions></OurMissions>
+    </div>
+  );
+}
 
-    if(loading){
-        return <Loader></Loader>
-    }
-
-    console.log(user)
-    return (
-        <div>
-            <h1>Home</h1>
-        </div>
-    );
-};
-
-export default Home;
+export default HomePage;

@@ -4,24 +4,33 @@ import { AuthContext } from "../../Provider/AuthProvider";
 import Dropdown from "../../utilities/Dropdown";
 
 const NavBar = () => {
-
   const { user } = useContext(AuthContext);
 
-    const activeStyle = "text-red-500"
-    const normalStyle = "text-green-500"
+  const activeStyle = "text-black lg:text-white font-bold text-lg";
+  const normalStyle = "text-black font-bold text-lg";
 
   const links = (
     <>
-      <div className="flex gap-10">
-        <NavLink className={activeStyle ? activeStyle : normalStyle}>Home</NavLink>
-        <NavLink to={"/availableFoods"} className={activeStyle ? activeStyle : normalStyle}>Available Foods</NavLink>
+      <div className="flex flex-col lg:flex-row lg:gap-10">
+        <NavLink
+          to={"/"}
+          className={({ isActive }) => (isActive ? activeStyle : normalStyle)}
+        >
+          Home
+        </NavLink>
+        <NavLink
+          to={"/availableFoods"}
+          className={({ isActive }) => (isActive ? activeStyle : normalStyle)}
+        >
+          Available Foods
+        </NavLink>
       </div>
     </>
   );
 
   return (
     <div>
-      <div className="navbar bg-base-100 shadow-sm">
+      <div className="navbar bg-[#DC143C] text-white shadow-sm">
         <div className="navbar-start">
           <div className="dropdown">
             <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -48,7 +57,9 @@ const NavBar = () => {
               {links}
             </ul>
           </div>
-          <a className="btn btn-ghost text-xl">Plate Share</a>
+          <div>
+            <img className="w-sm md:w-lg" src="https://i.ibb.co.com/xSTHvjXJ/logo-1-Picsart-Background-Remover-1.png" alt="" />
+          </div>
         </div>
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">{links}</ul>
@@ -66,7 +77,6 @@ const NavBar = () => {
               Login
             </Link>
           )}
-
         </div>
       </div>
     </div>

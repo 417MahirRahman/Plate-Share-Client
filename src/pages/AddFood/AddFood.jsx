@@ -55,6 +55,7 @@ const AddFood = () => {
     const formData = {
       donatorName: user.displayName,
       donatorEmail: user.email,
+      donatorImage: user.photoURL,
       foodName: data.foodname,
       foodImage: data.foodImage,
       quantity: data.quantity,
@@ -66,20 +67,12 @@ const AddFood = () => {
   };
 
   return (
-    <div className="border-2 my-15 flex flex-col items-center p-7 space-y-5">
-      <h1>ADD FOOD</h1>
-
-      <div>
-        <img
-          src={user?.photoURL}
-          alt="User-Image"
-          className="w-20 h-20 rounded-full"
-        />
-      </div>
+    <div className="p-10 mb-10 flex flex-col items-center  space-y-5">
+      <h1 className="text-center font-bold text-white mb-5 lg:my-10 text-2xl md:text-3xl lg:text-5xl">ADD FOOD</h1>
 
       <form onSubmit={handleSubmit(handleAddBtn)}>
-        <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-          <label className="label">Donator Name</label>
+        <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border-2 shadow-2xl p-4">
+          <label className="label font-bold">Donator Name</label>
           <input
             type="text"
             className="input border-2 border-black"
@@ -87,7 +80,7 @@ const AddFood = () => {
             disabled
           />
 
-          <label className="label">Email</label>
+          <label className="label font-bold">Email</label>
           <input
             type="text"
             className="input border-2 border-black"
@@ -95,7 +88,15 @@ const AddFood = () => {
             disabled
           />
 
-          <label className="label">Food Name</label>
+          <label className="label font-bold">Donator Image URL</label>
+          <input
+            type="text"
+            className="input border-2 border-black"
+            value={user.photoURL}
+            disabled
+          />
+
+          <label className="label font-bold">Food Name</label>
           <input
             {...register("foodname", { required: "Food name is required" })}
             type="text"
@@ -106,7 +107,7 @@ const AddFood = () => {
             <p className="text-red-500 text-sm">{errors.foodname.message}</p>
           )}
 
-          <label className="label">Food Image</label>
+          <label className="label font-bold">Food Image</label>
           <input
             {...register("foodImage", { required: "Image URL is required" })}
             type="text"
@@ -117,7 +118,7 @@ const AddFood = () => {
             <p className="text-red-500 text-sm">{errors.foodImage.message}</p>
           )}
 
-          <label className="label">Food Quantity</label>
+          <label className="label font-bold">Food Quantity</label>
           <input
             {...register("quantity", { required: "Quantity is required" })}
             type="number"
@@ -128,15 +129,15 @@ const AddFood = () => {
             <p className="text-red-500 text-sm">{errors.quantity.message}</p>
           )}
 
-          <label className="label">Food Status</label>
+          <label className="label font-bold">Food Status</label>
           <input
             type="text"
-            className="input"
+            className="input border-2 border-black"
             defaultValue={"Available"}
             disabled
           />
 
-          <label className="label">Pickup Location</label>
+          <label className="label font-bold">Pickup Location</label>
           <input
             {...register("pickupLocation", {
               required: "Pickup location is required",
@@ -151,7 +152,7 @@ const AddFood = () => {
             </p>
           )}
 
-          <label className="label">Expire Date</label>
+          <label className="label font-bold">Expire Date</label>
           <input
             {...register("expireDate", { required: "Expire date is required" })}
             type="date"
@@ -160,15 +161,15 @@ const AddFood = () => {
             <p className="text-red-500 text-sm">{errors.expireDate.message}</p>
           )}
 
-          <label className="label">Additional Notes</label>
+          <label className="label font-bold">Additional Notes</label>
           <textarea
             {...register("additionalNote")}
             className="textarea"
             placeholder="Type here..."
           ></textarea>
 
-          <button className="btn btn-neutral mt-4" type="submit">
-            Add
+          <button className="btn bg-[#DC143C] text-white font-bold rounded-xl" type="submit">
+            ADD
           </button>
         </fieldset>
       </form>
