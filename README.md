@@ -23,7 +23,7 @@ A full-stack web application for managing food donations and requests. Donors ca
 
 ---
 
-# Project Structure
+## Project Structure
 client/
 ├── src/
 │   ├── pages/          # Home, FoodDetails, AddFood, MyFoods, etc.
@@ -35,10 +35,15 @@ server/
 
 ---
 
-## Usage
-1. Clone the repository:
+## Clone the repository:
 ```bash
 git clone https://github.com/your-username/food-donation-app.git
+
+```
+---
+
+## Install dependencies and start the development server:
+```bash
 npm install
 npm run dev
 
