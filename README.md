@@ -2,7 +2,7 @@
 
 A full-stack web application for managing food donations and requests. Donors can list available food, and recipients can request food. Donors can accept or reject requests and track status.
 
-**Live Site:** [https://plate-share-777.netlify.app/](https://your-live-site-url.com)
+**Live Site:** [https://plate-share-777.netlify.app/](https://yourapp.netlify.app)
 
 ---
 
