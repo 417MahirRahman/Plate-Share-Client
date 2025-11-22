@@ -24,6 +24,7 @@ A full-stack web application for managing food donations and requests. Donors ca
 ---
 
 ## Project Structure
+```bash
 client/
 ├── src/
 │   ├── pages/          # Home, FoodDetails, AddFood, MyFoods, etc.
@@ -32,6 +33,7 @@ client/
 │   └── utilities/      # Loader, Dropdown, Validity
 server/
 ├── index.js            # Express server
+```
 
 ---
 
