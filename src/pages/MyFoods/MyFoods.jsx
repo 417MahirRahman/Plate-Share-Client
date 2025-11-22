@@ -14,11 +14,7 @@ const MyFoods = () => {
   const { register, handleSubmit, setValue, reset } = useForm();
 
   useEffect(() => {
-    fetch(`http://localhost:3000/myFood?email=${user.email}`, {
-      headers: {
-        authorization: `Bearer ${user.accessToken}`,
-      },
-    })
+    fetch(`http://localhost:3000/myFood?email=${user.email}`)
       .then((res) => res.json())
       .then((data) => {
         setData(data);

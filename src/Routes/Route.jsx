@@ -11,6 +11,7 @@ import FoodDetails from "../pages/FoodDetails/FoodDetails";
 import AllFood from "../pages/AvailableFood/AllFood";
 import MyFoods from "../pages/MyFoods/MyFoods";
 import MyFoodReq from "../pages/MyFoodReq/MyFoodReq";
+import DetailsNotFound from "../pages/ErrorPage/DetailsNotFound";
 
 export const router = createBrowserRouter([
   {
@@ -37,15 +38,12 @@ export const router = createBrowserRouter([
                 <FoodDetails></FoodDetails>
               </PrivateRoute>
             ),
-            loader: async ({ params }) => {
-              const res = await fetch(
-                `http://localhost:3000/availableFoods/${params.id}`
-              );
-              const data = await res.json();
-              return data;
-            },
           },
         ],
+      },
+      {
+        path: "/detailsNotFound",
+        Component: DetailsNotFound,
       },
       {
         path: "/addFood",
@@ -65,9 +63,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "/myFoodReq",
-        element: <PrivateRoute>
-          <MyFoodReq></MyFoodReq>
-        </PrivateRoute>,
+        element: (
+          <PrivateRoute>
+            <MyFoodReq></MyFoodReq>
+          </PrivateRoute>
+        ),
       },
       {
         path: "/login",

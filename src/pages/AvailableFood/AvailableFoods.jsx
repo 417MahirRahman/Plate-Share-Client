@@ -1,19 +1,20 @@
-import React, { use } from "react";
+import React, { use, useEffect, useState } from "react";
 import { Link } from "react-router";
 import { AuthContext } from "../../Provider/AuthProvider";
 import Loader from "../../utilities/Loader";
-import { useQuery } from "@tanstack/react-query";
 
 const AvailableFoods = () => {
-  const { loading } = use(AuthContext);
+  const { user, loading } = use(AuthContext);
+  const [data, setData] = useState([]);
 
-  const { data: foods = [] } = useQuery({
-    queryKey: ["availableFoods"],
-    queryFn: async () => {
+  useEffect(() => {
+    const loadData = async () => {
       const res = await fetch("http://localhost:3000/availableFoods");
-      return res.json();
-    },
-  });
+      const result = await res.json();
+      setData(result);
+    };
+    loadData();
+  }, [user]);
 
   if (loading) {
     return <Loader />;
@@ -25,7 +26,7 @@ const AvailableFoods = () => {
         ALL FOODS
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-3 lg:p-5 xl:p-7 gap-10 lg:gap-15 py-5">
-        {foods.map((food) => (
+        {data.map((food) => (
           <div
             key={food._id}
             className="card bg-base-100 w-full lg:w-11/12 lg:mx-auto shadow-lg hover:shadow-2xl"

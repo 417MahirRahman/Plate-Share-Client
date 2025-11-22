@@ -10,11 +10,7 @@ const MyFoodReq = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:3000/myFoodRequests?email=${user.email}`, {
-      headers: {
-        authorization: `Bearer ${user.accessToken}`,
-      },
-    })
+    fetch(`http://localhost:3000/myFoodRequests?email=${user.email}`)
       .then((res) => res.json())
       .then((result) => {
         setData(Array.isArray(result) ? result : result.requests || []);
@@ -43,7 +39,7 @@ const MyFoodReq = () => {
   if (loading) return <Loader />;
 
   return (
-    <div className="w-full md:w-4/5 lg:w-3/4 mx-auto mt-10 px-2 md:px-0">
+    <div className="w-full md:w-4/5 lg:w-3/4 mx-auto mt-10 px-2 md:px-0 py-5">
       <div className="bg-white shadow-xl rounded-xl overflow-hidden">
         <h2 className="text-center bg-[#DC143C] text-white py-3 text-lg md:text-xl font-bold">
           My Food Requests
@@ -63,7 +59,7 @@ const MyFoodReq = () => {
                 <div className="flex items-center gap-3 text-left">
                   <img
                     className="w-12 h-12 rounded-full object-cover"
-                    src={request.ImageURL}
+                    src={request.foodImage}
                     alt="Profile"
                   />
                   <div>

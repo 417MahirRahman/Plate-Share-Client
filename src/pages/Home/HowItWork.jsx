@@ -17,7 +17,7 @@ const HowItWork = () => {
           <div className="flex justify-center items-center w-full h-full overflow-hidden">
             <img
               className="w-full rounded-xl object-cover p-2"
-              src="https://i.ibb.co.com/BHjpGXYH/af.png"
+              src="https://i.ibb.co.com/9mWf8W06/addFood.png"
             />
           </div>
         </motion.div>

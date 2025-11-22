@@ -1,7 +1,6 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Bounce, toast } from "react-toastify";
 import { AuthContext } from "../../Provider/AuthProvider";
-import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
 const AddFood = () => {
@@ -13,45 +12,51 @@ const AddFood = () => {
     formState: { errors },
   } = useForm();
 
-  const addFoodMutation = useMutation({
-    mutationFn: async (formData) => {
-      const res = await fetch("http://localhost:3000/availableFoods", {
+  const [formDataToSend, setFormDataToSend] = useState(null);
+
+  useEffect(() => {
+    if (!formDataToSend) return;
+
+    const addFood = () => {
+      fetch("http://localhost:3000/availableFoods", {
         method: "POST",
-        headers: { "content-type": "application/json",
-          authorization: `Bearer ${user.accessToken}`
-         },
-        body: JSON.stringify(formData),
-      });
-      return res.json();
-    },
-    onSuccess: () => {
-      toast.success("Food Added Successfully", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
-      reset();
-    },
-    onError: () => {
-      toast.error("Something went wrong!", {
-              position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: false,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-              transition: Bounce,
-            });
-    },
-  });
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(formDataToSend),
+      })
+        .then((res) => res.json())
+        .then(() => {
+          toast.success("Food Added Successfully", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          });
+
+          reset();
+          setFormDataToSend(null);
+        })
+        .catch(() => {
+          toast.error("Something went wrong!", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          });
+        });
+    };
+
+    addFood();
+  }, [formDataToSend, reset]);
 
   const handleAddBtn = (data) => {
     const formData = {
@@ -65,12 +70,14 @@ const AddFood = () => {
       expireDate: data.expireDate,
       additionalNote: data.additionalNote,
     };
-    addFoodMutation.mutate(formData);
+    setFormDataToSend(formData);
   };
 
   return (
     <div className="p-10 mb-10 flex flex-col items-center  space-y-5">
-      <h1 className="text-center font-bold text-white mb-5 lg:my-10 text-2xl md:text-3xl lg:text-5xl">ADD FOOD</h1>
+      <h1 className="text-center font-bold text-white mb-5 lg:my-10 text-2xl md:text-3xl lg:text-5xl">
+        ADD FOOD
+      </h1>
 
       <form onSubmit={handleSubmit(handleAddBtn)}>
         <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border-2 shadow-2xl p-4">
@@ -170,7 +177,10 @@ const AddFood = () => {
             placeholder="Type here..."
           ></textarea>
 
-          <button className="btn bg-[#DC143C] text-white font-bold rounded-xl" type="submit">
+          <button
+            className="btn bg-[#DC143C] text-white font-bold rounded-xl"
+            type="submit"
+          >
             ADD
           </button>
         </fieldset>

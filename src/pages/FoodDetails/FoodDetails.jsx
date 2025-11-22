@@ -1,16 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useLoaderData } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { AuthContext } from "../../Provider/AuthProvider";
 import { useForm } from "react-hook-form";
 import { Bounce, toast } from "react-toastify";
-import { useMutation } from "@tanstack/react-query";
 import Loader from "../../utilities/Loader";
 
 const FoodDetails = () => {
+  const { id } = useParams();
   const { user, setLoading } = useContext(AuthContext);
-  const { food } = useLoaderData();
   const [data, setData] = useState([]);
   const [statusMap, setStatusMap] = useState({});
+  const [foodDetails, setFoodDetails] = useState(null);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -20,94 +21,108 @@ const FoodDetails = () => {
   } = useForm();
 
   useEffect(() => {
-    fetch(`http://localhost:3000/FoodRequest?foodID=${food._id}`, {
-      headers: {
-        authorization: `Bearer ${user.accessToken}`
+    const loadFoodDetails = async () => {
+      const res = await fetch(`http://localhost:3000/availableFoods/${id}`);
+      if (!res.ok) {
+        navigate("/detailsNotFound");
+        return;
       }
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Fetched Data: ", data);
-        setData(data);
-        setLoading(false);
-      });
-  }, [food._id, setLoading]);
+      const result = await res.json();
+      setFoodDetails(result.food);
+      setLoading(false);
+      console.log("food:", result.food);
+    };
 
-  const addFoodMutation = useMutation({
-    mutationFn: (formData) =>
-      fetch("http://localhost:3000/FoodRequest", {
-        method: "POST",
-        headers: { "Content-Type": "application/json",
-          authorization: `Bearer ${user.accessToken}`
-         },
-        body: JSON.stringify(formData),
-      }).then((res) => res.json()),
+    loadFoodDetails();
+  }, [id, setLoading, navigate]);
 
-    onSuccess: () => {
-      toast.success("Request sent", { transition: Bounce });
-      document.getElementById(`modal_${food._id}`).close();
-      reset();
-    },
-  });
+  useEffect(() => {
+    if (!foodDetails) return;
+    const loadRequests = async () => {
+      const res = await fetch(
+        `http://localhost:3000/FoodRequest?foodID=${foodDetails._id}`
+      );
+      const result = await res.json();
+      setData(result);
+      setLoading(false);
+    };
+    loadRequests();
+  }, [foodDetails, setLoading]);
 
-  const updateStatusMutation = useMutation({
-    mutationFn: ({ id, foodStatus }) =>
-      fetch(`http://localhost:3000/FoodRequest/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json",
-          authorization: `Bearer ${user.accessToken}`
-         },
-        body: JSON.stringify({ foodStatus }),
-      }).then((res) => res.json()),
+  const updateStatus = async (id, status) => {
+    const res = await fetch(`http://localhost:3000/FoodRequest/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ foodStatus: status }),
+    });
 
-    onSuccess: (response) => {
-      if (response.updatedRequest) {
-        setStatusMap((prev) => ({
-          ...prev,
-          [response.updatedRequest._id]: response.updatedRequest.foodStatus,
-        }));
-        setData((prev) =>
-          prev.map((req) =>
-            req._id === response.updatedRequest._id
-              ? { ...req, foodStatus: response.updatedRequest.foodStatus }
-              : req
-          )
-        );
-        toast.success(`Status updated`);
-      }
-    },
-  });
+    const result = await res.json();
 
-  if (data.length === 0 && !setLoading) {
+    if (result.updatedRequest && result.updatedRequest) {
+      setStatusMap((prev) => ({
+        ...prev,
+        [result.updatedRequest._id]: result.updatedRequest.foodStatus,
+      }));
+
+      setData((prev) =>
+        prev.map((req) =>
+          req._id === result.updatedRequest._id
+            ? { ...req, foodStatus: result.updatedRequest.foodStatus }
+            : req
+        )
+      );
+
+      toast.success("Status updated!");
+    }
+  };
+
+  if (!foodDetails || !Array.isArray(data)) {
     return <Loader />;
   }
 
-  const handleSubmitBtn = (formData) => {
+  const handleSubmitBtn = async (formData) => {
     const requestData = {
       Name: user.displayName,
       Email: user.email,
       ImageURL: user.photoURL,
-      foodID: food._id,
-      foodname: food.foodName,
-      foodImage: food.foodImage,
-      foodOwnerEmail: food.donatorEmail,
+      foodID: foodDetails._id,
+      foodname: foodDetails.foodName,
+      foodImage: foodDetails.foodImage,
+      foodOwnerEmail: foodDetails.donatorEmail,
       ContactNumber: formData.ContactNumber,
     };
 
-    addFoodMutation.mutate(requestData);
+    const res = await fetch("http://localhost:3000/FoodRequest", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestData),
+    });
+
+    const result = await res.json();
+
+    if (result.success) {
+      toast.success("Request sent", { transition: Bounce });
+      if (foodDetails?._id) {
+        document.getElementById(`modal_${foodDetails._id}`).close();
+      }
+      reset();
+
+      setData((prev) => [...prev, result.request]);
+    } else {
+      toast.error("Failed to send request");
+    }
   };
 
-  const handleAccept = (id) => {
-    updateStatusMutation.mutate({ id, foodStatus: "Donated" });
-  };
+  const handleAccept = (id) => updateStatus(id, "Donated");
+  const handleReject = (id) => updateStatus(id, "Rejected");
 
-  const handleReject = (id) => {
-    updateStatusMutation.mutate({ id, foodStatus: "Rejected" });
-  };
-
-  const filteredRequests = data.filter((req) => req.foodID === food._id);
+  console.log("Data Item:", data);
+  const filteredRequests =
+    Array.isArray(data) && foodDetails
+      ? data.filter((req) => req?.foodID === foodDetails._id)
+      : [];
   const ownerEmail = filteredRequests.map((r) => r.foodOwnerEmail)[0];
-  const isDisabled = user.email === food.donatorEmail;
+  const isDisabled = user.email === foodDetails.donatorEmail;
 
   return (
     <div className="pb-20 p-2">
@@ -122,12 +137,14 @@ const FoodDetails = () => {
       >
         <div className="hero-content flex-col lg:flex-row gap-10">
           <img
-            src={food.donatorImage}
+            src={foodDetails.donatorImage}
             className="max-w-sm rounded-lg shadow-2xl"
           />
           <div>
-            <h1 className="text-2xl font-bold">{food.donatorName}</h1>
-            <h1 className="text-lg font-semibold">{food.donatorEmail}</h1>
+            <h1 className="text-2xl font-bold">{foodDetails.donatorName}</h1>
+            <h1 className="text-lg font-semibold">
+              {foodDetails.donatorEmail}
+            </h1>
           </div>
         </div>
       </div>
@@ -139,22 +156,28 @@ const FoodDetails = () => {
       >
         <div className="hero-content flex-col lg:flex-row-reverse gap-10">
           <img
-            src={food.foodImage}
+            src={foodDetails.foodImage}
             className="max-w-sm rounded-lg shadow-2xl"
           />
           <div>
-            <h1 className="text-3xl font-bold">{food.foodName}</h1>
-            <p className="font-semibold mt-2">Quantity: {food.quantity}</p>
-            <p className="font-semibold">Expire Date: {food.expireDate}</p>
-            <p className="font-semibold">
-              Pickup Location: {food.pickupLocation}
+            <h1 className="text-3xl font-bold">{foodDetails.foodName}</h1>
+            <p className="font-semibold mt-2">
+              Quantity: {foodDetails.quantity}
             </p>
-            <p className="py-4">{food.additionalNote}</p>
+            <p className="font-semibold">
+              Expire Date: {foodDetails.expireDate}
+            </p>
+            <p className="font-semibold">
+              Pickup Location: {foodDetails.pickupLocation}
+            </p>
+            <p className="py-4">{foodDetails.additionalNote}</p>
             {!isDisabled && (
               <button
                 className="btn bg-[#DC143C] text-white font-bold rounded-xl border-none"
                 onClick={() =>
-                  document.getElementById(`modal_${food._id}`).showModal()
+                  document
+                    .getElementById(`modal_${foodDetails._id}`)
+                    .showModal()
                 }
               >
                 Request Food
@@ -165,7 +188,7 @@ const FoodDetails = () => {
       </div>
 
       {/* Modal */}
-      <dialog id={`modal_${food._id}`} className="modal">
+      <dialog id={`modal_${foodDetails?._id}`} className="modal">
         <form
           onSubmit={handleSubmit(handleSubmitBtn)}
           className="modal-box bg-white text-black"
@@ -194,7 +217,7 @@ const FoodDetails = () => {
             {...register("ContactNumber", {
               required: "Contact Number is required",
             })}
-            type="number"
+            type="text"
             className="input input-bordered w-full"
             placeholder="01****"
           />
@@ -208,7 +231,7 @@ const FoodDetails = () => {
               type="button"
               className="btn"
               onClick={() =>
-                document.getElementById(`modal_${food._id}`).close()
+                document.getElementById(`modal_${foodDetails._id}`).close()
               }
             >
               Close
@@ -218,7 +241,7 @@ const FoodDetails = () => {
       </dialog>
 
       {/* Food Requests Table */}
-      {food.donatorEmail === user.email && (
+      {foodDetails.donatorEmail === user.email && (
         <div className="w-full md:w-3/4 lg:w-1/2 mx-auto mt-10">
           <div className="bg-white shadow-xl rounded-xl overflow-hidden">
             <h2 className="text-center bg-[#DC143C] text-white py-3 text-lg font-bold">
@@ -248,7 +271,7 @@ const FoodDetails = () => {
                             <h1>{request.Name}</h1>
                           </div>
                           <div className="font-semibold text-gray-800">
-                            <h1>Requested Food: {food.foodName}</h1>
+                            <h1>Requested Food: {foodDetails.foodName}</h1>
                           </div>
                         </div>
                       </div>
@@ -288,7 +311,7 @@ const FoodDetails = () => {
               </div>
             ) : (
               <p className="text-center py-5 text-gray-600">
-                No requests found.
+                No Requests Found.
               </p>
             )}
           </div>

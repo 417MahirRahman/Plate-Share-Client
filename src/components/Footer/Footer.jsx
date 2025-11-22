@@ -1,4 +1,5 @@
 import React from "react";
+import { FaSquareXTwitter } from "react-icons/fa6";
 
 const Footer = () => {
   return (
@@ -9,13 +10,15 @@ const Footer = () => {
           <p className="font-bold">
             ACME Industries Ltd.
             <br />
-            Providing reliable tech since 1992
+            Providing reliable tech since 2015
           </p>
           <p>Copyright © {new Date().getFullYear()} - All right reserved</p>
         </aside>
         <nav>
           <div className="grid grid-flow-col gap-4">
-        
+            <a>
+              <FaSquareXTwitter size={24} />
+            </a>
             <a>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
