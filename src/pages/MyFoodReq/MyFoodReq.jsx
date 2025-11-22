@@ -10,7 +10,7 @@ const MyFoodReq = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:3000/myFoodRequests?email=${user.email}`)
+    fetch(`https://plate-share-server-lilac.vercel.app/myFoodRequests?email=${user.email}`)
       .then((res) => res.json())
       .then((result) => {
         setData(Array.isArray(result) ? result : result.requests || []);
@@ -20,7 +20,7 @@ const MyFoodReq = () => {
   }, [user.email]);
 
   const handleCancelBtn = async (id) => {
-    const res = await fetch(`http://localhost:3000/FoodRequest/${id}`, {
+    const res = await fetch(`https://plate-share-server-lilac.vercel.app/FoodRequest/${id}`, {
       method: "DELETE",
       headers: {
         authorization: `Bearer ${user.accessToken}`

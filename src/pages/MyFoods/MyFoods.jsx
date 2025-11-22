@@ -14,7 +14,7 @@ const MyFoods = () => {
   const { register, handleSubmit, setValue, reset } = useForm();
 
   useEffect(() => {
-    fetch(`http://localhost:3000/myFood?email=${user.email}`)
+    fetch(`https://plate-share-server-lilac.vercel.app/myFood?email=${user.email}`)
       .then((res) => res.json())
       .then((data) => {
         setData(data);
@@ -37,7 +37,7 @@ const MyFoods = () => {
   };
 
   const handleUpdateBtn = (id, formData) => {
-    fetch(`http://localhost:3000/availableFoods/${id}`, {
+    fetch(`https://plate-share-server-lilac.vercel.app/availableFoods/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -73,7 +73,7 @@ const MyFoods = () => {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(`http://localhost:3000/availableFoods/${id}`, {
+        fetch(`https://plate-share-server-lilac.vercel.app/availableFoods/${id}`, {
           method: "DELETE",
           headers: {
             authorization: `Bearer ${user.accessToken}`,

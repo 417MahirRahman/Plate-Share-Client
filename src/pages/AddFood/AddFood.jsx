@@ -18,7 +18,7 @@ const AddFood = () => {
     if (!formDataToSend) return;
 
     const addFood = () => {
-      fetch("http://localhost:3000/availableFoods", {
+      fetch("https://plate-share-server-lilac.vercel.app/availableFoods", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(formDataToSend),

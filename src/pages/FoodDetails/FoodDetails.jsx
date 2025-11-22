@@ -22,7 +22,7 @@ const FoodDetails = () => {
 
   useEffect(() => {
     const loadFoodDetails = async () => {
-      const res = await fetch(`http://localhost:3000/availableFoods/${id}`);
+      const res = await fetch(`https://plate-share-server-lilac.vercel.app/availableFoods/${id}`);
       if (!res.ok) {
         navigate("/detailsNotFound");
         return;
@@ -40,7 +40,7 @@ const FoodDetails = () => {
     if (!foodDetails) return;
     const loadRequests = async () => {
       const res = await fetch(
-        `http://localhost:3000/FoodRequest?foodID=${foodDetails._id}`
+        `https://plate-share-server-lilac.vercel.app/FoodRequest?foodID=${foodDetails._id}`
       );
       const result = await res.json();
       setData(result);
@@ -50,7 +50,7 @@ const FoodDetails = () => {
   }, [foodDetails, setLoading]);
 
   const updateStatus = async (id, status) => {
-    const res = await fetch(`http://localhost:3000/FoodRequest/${id}`, {
+    const res = await fetch(`https://plate-share-server-lilac.vercel.app/FoodRequest/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ foodStatus: status }),
@@ -92,7 +92,7 @@ const FoodDetails = () => {
       ContactNumber: formData.ContactNumber,
     };
 
-    const res = await fetch("http://localhost:3000/FoodRequest", {
+    const res = await fetch("https://plate-share-server-lilac.vercel.app/FoodRequest", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestData),
@@ -116,7 +116,6 @@ const FoodDetails = () => {
   const handleAccept = (id) => updateStatus(id, "Donated");
   const handleReject = (id) => updateStatus(id, "Rejected");
 
-  console.log("Data Item:", data);
   const filteredRequests =
     Array.isArray(data) && foodDetails
       ? data.filter((req) => req?.foodID === foodDetails._id)

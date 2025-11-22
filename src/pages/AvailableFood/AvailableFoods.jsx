@@ -9,7 +9,7 @@ const AvailableFoods = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      const res = await fetch("http://localhost:3000/availableFoods");
+      const res = await fetch("https://plate-share-server-lilac.vercel.app/availableFoods");
       const result = await res.json();
       setData(result);
     };

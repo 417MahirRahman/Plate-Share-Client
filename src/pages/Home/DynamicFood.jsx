@@ -8,7 +8,7 @@ const DynamicFood = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/dynamicFood")
+    fetch("https://plate-share-server-lilac.vercel.app/dynamicFood")
       .then((res) => res.json())
       .then((data) => {
         setData(data);
