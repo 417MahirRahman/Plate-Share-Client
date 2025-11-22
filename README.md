@@ -2,7 +2,7 @@
 
 A full-stack web application for managing food donations and requests. Donors can list available food, and recipients can request food. Donors can accept or reject requests and track status.
 
-**Live Site:** [https://your-live-site-url.com](https://your-live-site-url.com)
+**Live Site:** [https://plate-share-777.netlify.app/](https://your-live-site-url.com)
 
 ---
 
@@ -39,7 +39,7 @@ server/
 
 ## Clone the repository:
 ```bash
-git clone https://github.com/your-username/food-donation-app.git
+git clone https://github.com/417MahirRahman/Plate-Share-Client.git
 
 ```
 ---
