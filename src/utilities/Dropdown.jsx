@@ -3,6 +3,7 @@ import { AuthContext } from "../Provider/AuthProvider";
 import { toast, Bounce } from "react-toastify";
 import { IoIosLogOut } from "react-icons/io";
 import { Link, NavLink } from "react-router";
+import { User } from "lucide-react";
 
 const Dropdown = () => {
   const { user, logOut } = useContext(AuthContext);
@@ -49,9 +50,15 @@ const Dropdown = () => {
         </summary>
         <ul className="menu dropdown-content bg-base-100 rounded-box z-10 w-52 p-2 shadow-sm">
           <li>
-            <NavLink to={"/addFood"} className="text-black font-bold">Add Food</NavLink>
-            <NavLink to={"/myFood"} className="text-black font-bold">Manage My Foods</NavLink>
-            <NavLink to={"/myFoodReq"} className="text-black font-bold">My Food Requests</NavLink>
+            <div>
+              <User size={16} className="text-black font-bold" />
+              <Link
+                to={"/profile"}
+                className="font-bold text-black"
+              >
+                Profile
+              </Link>
+            </div>
           </li>
           <li className="flex gap-1">
             <div>

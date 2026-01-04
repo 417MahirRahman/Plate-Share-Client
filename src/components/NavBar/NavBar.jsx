@@ -6,8 +6,9 @@ import Dropdown from "../../utilities/Dropdown";
 const NavBar = () => {
   const { user } = useContext(AuthContext);
 
-  const activeStyle = "text-black lg:text-white font-bold text-2xl border-b-4 border-white";
-  const normalStyle = "text-white font-bold text-xl";
+  const activeStyle =
+    "text-red-600 lg:text-white font-bold text-2xl border-b-4 border-white";
+  const normalStyle = "text-red-600 lg:text-white font-bold text-xl";
 
   const links = (
     <>
@@ -23,6 +24,33 @@ const NavBar = () => {
           className={({ isActive }) => (isActive ? activeStyle : normalStyle)}
         >
           Available Foods
+        </NavLink>
+        {user && (
+          <div className="flex flex-col lg:flex-row lg:gap-10">
+            <NavLink
+              to={"/dashboard/myFood"}
+              className={({ isActive }) =>
+                isActive ? activeStyle : normalStyle
+              }
+            >
+              Dashboard
+            </NavLink>
+            <NavLink
+              to={"/addFood"}
+              className={({ isActive }) =>
+                isActive ? activeStyle : normalStyle
+              }
+            >
+              Add Food
+            </NavLink>
+          </div>
+        )}
+
+        <NavLink
+          to={"/about"}
+          className={({ isActive }) => (isActive ? activeStyle : normalStyle)}
+        >
+          About
         </NavLink>
       </div>
     </>
@@ -52,13 +80,17 @@ const NavBar = () => {
             </div>
             <ul
               tabIndex="-1"
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-99 mt-3 w-52 p-2 shadow"
             >
               {links}
             </ul>
           </div>
           <div>
-            <img className="w-sm md:w-lg" src="https://i.ibb.co.com/xSTHvjXJ/logo-1-Picsart-Background-Remover-1.png" alt="" />
+            <img
+              className="w-sm md:w-lg"
+              src="https://i.ibb.co.com/xSTHvjXJ/logo-1-Picsart-Background-Remover-1.png"
+              alt=""
+            />
           </div>
         </div>
         <div className="navbar-center hidden lg:flex">

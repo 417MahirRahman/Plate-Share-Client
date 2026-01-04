@@ -90,11 +90,11 @@ const MyFoods = () => {
 
   return (
     <div className="mb-20">
-      <h1 className="text-center font-bold text-white my-10 text-5xl">
+      <h1 className="text-center font-bold text-red-500 my-10 text-5xl">
         My Foods
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-3 lg:p-5 xl:p-7 gap-10 lg:gap-15 py-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-3 lg:p-5 xl:p-7 gap-10 lg:gap-15 py-5">
         {data.map((food) => (
           <div key={food._id}>
             <div className="card bg-base-100 w-full lg:w-11/12 lg:mx-auto shadow-lg hover:shadow-2xl">

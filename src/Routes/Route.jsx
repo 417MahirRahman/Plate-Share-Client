@@ -12,6 +12,9 @@ import AllFood from "../pages/AvailableFood/AllFood";
 import MyFoods from "../pages/MyFoods/MyFoods";
 import MyFoodReq from "../pages/MyFoodReq/MyFoodReq";
 import DetailsNotFound from "../pages/ErrorPage/DetailsNotFound";
+import Dashboard from "../pages/Roots/Dashboard";
+import About from "../pages/AboutUs/About"
+import Profile from "../pages/MyProfile/Profile";
 
 export const router = createBrowserRouter([
   {
@@ -33,11 +36,7 @@ export const router = createBrowserRouter([
           },
           {
             path: ":id",
-            element: (
-              <PrivateRoute>
-                <FoodDetails></FoodDetails>
-              </PrivateRoute>
-            ),
+            element: <FoodDetails></FoodDetails>,
           },
         ],
       },
@@ -54,18 +53,14 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "/myFood",
-        element: (
-          <PrivateRoute>
-            <MyFoods></MyFoods>
-          </PrivateRoute>
-        ),
+        path: "/about",
+        element: <About></About>,
       },
       {
-        path: "/myFoodReq",
+        path: "/profile",
         element: (
           <PrivateRoute>
-            <MyFoodReq></MyFoodReq>
+            <Profile></Profile>
           </PrivateRoute>
         ),
       },
@@ -76,6 +71,24 @@ export const router = createBrowserRouter([
       {
         path: "/register",
         Component: Register,
+      },
+    ],
+  },
+  {
+    path: "/dashboard",
+    element: (
+      <PrivateRoute>
+        <Dashboard></Dashboard>
+      </PrivateRoute>
+    ),
+    children: [
+      {
+        path: "/dashboard/myFood",
+        element: <MyFoods></MyFoods>,
+      },
+      {
+        path: "/dashboard/myFoodReq",
+        element: <MyFoodReq></MyFoodReq>,
       },
     ],
   },
