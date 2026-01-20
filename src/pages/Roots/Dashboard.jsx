@@ -1,103 +1,145 @@
-import { Link, Outlet } from "react-router";
-import { Utensils, ClipboardList } from "lucide-react";
+import React from "react";
+import {
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { motion } from "framer-motion";
+
+const summaryData = [
+  { title: "Total Foods", value: 24 },
+  { title: "Available Foods", value: 14 },
+  { title: "Donated Foods", value: 10 },
+  { title: "Total Requests", value: 18 },
+];
+
+const foodStatusData = [
+  { name: "Available", value: 14 },
+  { name: "Donated", value: 10 },
+];
+
+const requestStatusData = [
+  { name: "Pending", count: 6 },
+  { name: "Accepted", count: 8 },
+  { name: "Rejected", count: 4 },
+];
+
+const foodAddedData = [
+  { day: "Mon", foods: 2 },
+  { day: "Tue", foods: 4 },
+  { day: "Wed", foods: 3 },
+  { day: "Thu", foods: 5 },
+  { day: "Fri", foods: 6 },
+];
 
 const Dashboard = () => {
   return (
-    <div
-      data-theme="light"
-      className="flex flex-col min-h-screen bg-linear-to-br from-slate-50 to-blue-50"
-    >
-      <div className="drawer lg:drawer-open">
-        <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
-        <div className="drawer-content">
-          {/* Navbar */}
-          <nav className="navbar w-full bg-white/80 backdrop-blur-sm border-b border-slate-200 shadow-sm">
-            <label
-              htmlFor="my-drawer-4"
-              aria-label="open sidebar"
-              className="btn btn-square btn-ghost"
+    <div>
+      <div className="p-6 space-y-8">
+        {/* Overview Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          {summaryData.map((item, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 text-center hover:shadow-md transition-shadow"
             >
-              {/* Sidebar toggle icon */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                strokeLinejoin="round"
-                strokeLinecap="round"
-                strokeWidth="2"
-                fill="none"
-                stroke="currentColor"
-                className="my-1.5 inline-block size-4 text-slate-700"
-              >
-                <path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path>
-                <path d="M9 4v16"></path>
-                <path d="M14 10l2 2l-2 2"></path>
-              </svg>
-            </label>
-          </nav>
-          {/* Page content here */}
-          <Outlet></Outlet>
-          <div className="p-4"></div>
+              <h2 className="text-sm text-gray-600 font-medium">
+                {item.title}
+              </h2>
+              <p className="text-3xl font-bold mt-2 text-[#DC143C]">
+                {item.value}
+              </p>
+            </motion.div>
+          ))}
         </div>
 
-        <div className="drawer-side is-drawer-close:overflow-visible">
-          <label
-            htmlFor="my-drawer-4"
-            aria-label="close sidebar"
-            className="drawer-overlay"
-          ></label>
-          <div className="flex min-h-full flex-col items-start bg-slate-800 text-white is-drawer-close:w-14 is-drawer-open:w-64">
-            {/* Sidebar content here */}
-            <ul className="menu w-full grow">
-              {/* List item */}
-              <li>
-                <Link
-                  to={"/"}
-                  className="is-drawer-close:tooltip is-drawer-close:tooltip-right hover:bg-slate-700"
-                  data-tip="Homepage"
-                >
-                  {/* Home icon */}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    strokeLinejoin="round"
-                    strokeLinecap="round"
-                    strokeWidth="2"
-                    fill="none"
-                    stroke="currentColor"
-                    className="my-1.5 inline-block size-4"
-                  >
-                    <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path>
-                    <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                  </svg>
-                  <span className="is-drawer-close:hidden">Homepage</span>
-                </Link>
-              </li>
-              {/* My Food */}
-              <li>
-                <Link
-                  to={"/dashboard/myFood"}
-                  className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                  data-tip="My Food"
-                >
-                  <Utensils className="size-4" />
-                  <span className="is-drawer-close:hidden">My Food</span>
-                </Link>
-              </li>
-              {/* Profile Settings */}
-              <li>
-                <Link
-                  to={"/dashboard/myFoodReq"}
-                  className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                  data-tip="My Food Request"
-                >
-                  <ClipboardList className="size-4" />
-                  <span className="is-drawer-close:hidden">
-                    My Food Request
-                  </span>
-                </Link>
-              </li>
-            </ul>
+        {/* Charts */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Food Status Pie Chart */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">
+              Food Status Distribution
+            </h3>
+            <ResponsiveContainer width="100%" height={250}>
+              <PieChart>
+                <Pie
+                  data={foodStatusData}
+                  dataKey="value"
+                  nameKey="name"
+                  fill="#DC143C"
+                  stroke="#fff"
+                  strokeWidth={2}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "white",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
+
+          {/* Request Status Bar Chart */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">
+              Request Status
+            </h3>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={requestStatusData}>
+                <XAxis dataKey="name" stroke="#6b7280" />
+                <YAxis stroke="#6b7280" />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "white",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                  }}
+                />
+                <Bar dataKey="count" fill="#DC143C" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Line Chart */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold mb-4 text-gray-800">
+            Foods Added This Week
+          </h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={foodAddedData}>
+              <XAxis dataKey="day" stroke="#6b7280" />
+              <YAxis stroke="#6b7280" />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "white",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: "8px",
+                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                }}
+              />
+              <Line
+                dataKey="foods"
+                stroke="#DC143C"
+                strokeWidth={3}
+                dot={{ fill: "#DC143C", strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 6, stroke: "#fff", strokeWidth: 2 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>

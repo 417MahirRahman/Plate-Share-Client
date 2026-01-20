@@ -58,7 +58,7 @@ const FoodDetails = () => {
 
     const result = await res.json();
 
-    if (result.updatedRequest && result.updatedRequest) {
+    if (result.updatedRequest) {
       setStatusMap((prev) => ({
         ...prev,
         [result.updatedRequest._id]: result.updatedRequest.foodStatus,
@@ -124,59 +124,47 @@ const FoodDetails = () => {
   const isDisabled = user.email === foodDetails.donatorEmail;
 
   return (
-    <div className="pb-20 p-2">
-      <h1 className="text-center font-bold text-white mt-10 mb-8 text-4xl">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      <h1 className="text-center font-bold text-[#DC143C] mt-10 mb-8 text-3xl md:text-4xl">
         FOOD DETAILS
       </h1>
 
       {/* Donor Info */}
-      <div
-        data-aos="flip-right"
-        className="hero flex justify-start text-white bg-linear-to-r from-[#DC143C] to-white mt-10 w-full md:w-3/4 mx-auto rounded-xl shadow-2xl"
-      >
-        <div className="hero-content flex-col lg:flex-row gap-10">
+      <div className="bg-linear-to-r from-[#DC143C] to-[#F7CAC9] p-6 rounded-xl shadow-lg mb-8">
+        <div className="flex flex-col md:flex-row items-center gap-6">
           <img
             src={foodDetails.donatorImage}
-            className="max-w-sm rounded-lg shadow-2xl"
+            className="w-24 h-24 rounded-full shadow-lg object-cover"
+            alt={foodDetails.donatorName}
           />
-          <div>
+          <div className="text-white text-center md:text-left">
             <h1 className="text-2xl font-bold">{foodDetails.donatorName}</h1>
-            <h1 className="text-lg font-semibold">
-              {foodDetails.donatorEmail}
-            </h1>
+            <h2 className="text-lg font-medium">{foodDetails.donatorEmail}</h2>
           </div>
         </div>
       </div>
 
       {/* Food Info */}
-      <div
-        data-aos="flip-left"
-        className="hero flex justify-end text-white bg-linear-to-r from-white to-[#DC143C] mt-10 w-full md:w-3/4 mx-auto rounded-xl shadow-2xl"
-      >
-        <div className="hero-content flex-col lg:flex-row-reverse gap-10">
+      <div className="bg-linear-to-r from-[#F7CAC9] to-[#DC143C] p-6 rounded-xl shadow-lg mb-8">
+        <div className="flex flex-col md:flex-row-reverse items-center gap-6">
           <img
             src={foodDetails.foodImage}
-            className="max-w-sm rounded-lg shadow-2xl"
+            className="w-32 h-32 rounded-lg shadow-lg object-cover"
+            alt={foodDetails.foodName}
           />
-          <div>
-            <h1 className="text-3xl font-bold">{foodDetails.foodName}</h1>
-            <p className="font-semibold mt-2">
-              Quantity: {foodDetails.quantity}
-            </p>
-            <p className="font-semibold">
-              Expire Date: {foodDetails.expireDate}
-            </p>
-            <p className="font-semibold">
-              Pickup Location: {foodDetails.pickupLocation}
-            </p>
-            <p className="py-4">{foodDetails.additionalNote}</p>
+          <div className="text-white text-center md:text-left">
+            <h1 className="text-2xl md:text-3xl font-bold mb-3">{foodDetails.foodName}</h1>
+            <div className="space-y-2 text-sm md:text-base">
+              <p><span className="font-semibold">Quantity:</span> {foodDetails.quantity}</p>
+              <p><span className="font-semibold">Expire Date:</span> {foodDetails.expireDate}</p>
+              <p><span className="font-semibold">Pickup Location:</span> {foodDetails.pickupLocation}</p>
+              <p className="mt-2">{foodDetails.additionalNote}</p>
+            </div>
             {!isDisabled && (
               <button
-                className="btn bg-[#DC143C] text-white font-bold rounded-xl border-none"
+                className="mt-4 bg-white text-[#DC143C] font-bold py-2 px-6 rounded-lg hover:bg-[#DC143C] hover:text-white hover:cursor-pointer transition-colors"
                 onClick={() =>
-                  document
-                    .getElementById(`modal_${foodDetails._id}`)
-                    .showModal()
+                  document.getElementById(`modal_${foodDetails._id}`).showModal()
                 }
               >
                 Request Food
@@ -190,7 +178,7 @@ const FoodDetails = () => {
       <dialog id={`modal_${foodDetails?._id}`} className="modal">
         <form
           onSubmit={handleSubmit(handleSubmitBtn)}
-          className="modal-box bg-white text-black"
+          className="modal-box bg-white text-gray-800"
         >
           <h3 className="font-bold text-lg mb-4 text-center">Request Food</h3>
 
@@ -202,13 +190,14 @@ const FoodDetails = () => {
             placeholder="#Road-9"
           />
           {errors.Location && (
-            <p className="text-red-500">{errors.Location.message}</p>
+            <p className="text-red-500 text-sm">{errors.Location.message}</p>
           )}
 
           <label className="label mt-3">Why Need Food?</label>
           <textarea
             {...register("WhyNeedFood")}
             className="textarea textarea-bordered w-full"
+            rows="3"
           ></textarea>
 
           <label className="label mt-3">Contact Number</label>
@@ -221,14 +210,14 @@ const FoodDetails = () => {
             placeholder="01****"
           />
           {errors.ContactNumber && (
-            <p className="text-red-500">{errors.ContactNumber.message}</p>
+            <p className="text-red-500 text-sm">{errors.ContactNumber.message}</p>
           )}
 
           <div className="flex justify-end gap-3 mt-6">
             <button className="btn bg-[#DC143C] text-white">Submit</button>
             <button
               type="button"
-              className="btn"
+              className="btn btn-outline"
               onClick={() =>
                 document.getElementById(`modal_${foodDetails._id}`).close()
               }
@@ -241,79 +230,75 @@ const FoodDetails = () => {
 
       {/* Food Requests Table */}
       {foodDetails.donatorEmail === user.email && (
-        <div className="w-full md:w-3/4 lg:w-1/2 mx-auto mt-10">
-          <div className="bg-white shadow-xl rounded-xl overflow-hidden">
-            <h2 className="text-center bg-[#DC143C] text-white py-3 text-lg font-bold">
-              Food Requests
-            </h2>
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+          <h2 className="text-center bg-[#DC143C] text-white py-3 text-lg font-bold">
+            Food Requests
+          </h2>
 
-            {filteredRequests.length > 0 && ownerEmail === user.email ? (
-              <div className="divide-y divide-gray-200">
-                {filteredRequests.map((request) => {
-                  const currentStatus =
-                    statusMap[request._id] || request.foodStatus;
-                  return (
-                    <div
-                      key={request._id}
-                      className="flex flex-row items-center justify-between p-4 hover:bg-gray-50 transition"
-                    >
-                      <div className="flex items-center gap-1 md:gap-3 text-left">
-                        <div>
-                          <img
-                            className="w-12 h-12 rounded-full object-cover"
-                            src={request.ImageURL}
-                            alt="Profile"
-                          />
+          {filteredRequests.length > 0 && ownerEmail === user.email ? (
+            <div className="divide-y divide-gray-200">
+              {filteredRequests.map((request) => {
+                const currentStatus =
+                  statusMap[request._id] || request.foodStatus;
+                return (
+                  <div
+                    key={request._id}
+                    className="flex flex-col sm:flex-row items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3 mb-3 sm:mb-0">
+                      <img
+                        className="w-10 h-10 rounded-full object-cover border-2 border-[#DC143C]"
+                        src={request.ImageURL}
+                        alt="Profile"
+                      />
+                      <div className="text-left">
+                        <div className="font-semibold text-gray-800">
+                          {request.Name}
                         </div>
-                        <div>
-                          <div className="font-semibold text-gray-800">
-                            <h1>{request.Name}</h1>
-                          </div>
-                          <div className="font-semibold text-gray-800">
-                            <h1>Requested Food: {foodDetails.foodName}</h1>
-                          </div>
+                        <div className="text-sm text-gray-600">
+                          Requested: {foodDetails.foodName}
                         </div>
-                      </div>
-
-                      <div className="flex gap-2 mt-3 sm:mt-0">
-                        {currentStatus === "Pending" &&
-                          ownerEmail === user.email && (
-                            <>
-                              <button
-                                onClick={() => handleAccept(request._id)}
-                                className="btn btn-sm bg-green-500 text-white hover:bg-green-600"
-                              >
-                                Accept
-                              </button>
-                              <button
-                                onClick={() => handleReject(request._id)}
-                                className="btn btn-sm bg-red-500 text-white hover:bg-red-600"
-                              >
-                                Reject
-                              </button>
-                            </>
-                          )}
-                        {currentStatus === "Donated" && (
-                          <span className="px-3 py-1 rounded bg-green-100 text-green-800 font-semibold text-sm">
-                            Accepted
-                          </span>
-                        )}
-                        {currentStatus === "Rejected" && (
-                          <span className="px-3 py-1 rounded bg-red-100 text-red-800 font-semibold text-sm">
-                            Rejected
-                          </span>
-                        )}
                       </div>
                     </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <p className="text-center py-5 text-gray-600">
-                No Requests Found.
-              </p>
-            )}
-          </div>
+
+                    <div className="flex gap-2">
+                      {currentStatus === "Pending" &&
+                        ownerEmail === user.email && (
+                          <>
+                            <button
+                              onClick={() => handleAccept(request._id)}
+                              className="btn btn-sm bg-green-500 text-white hover:bg-green-600"
+                            >
+                              Accept
+                            </button>
+                            <button
+                              onClick={() => handleReject(request._id)}
+                              className="btn btn-sm bg-red-500 text-white hover:bg-red-600"
+                            >
+                              Reject
+                            </button>
+                          </>
+                        )}
+                      {currentStatus === "Donated" && (
+                        <span className="px-3 py-1 rounded bg-green-100 text-green-800 font-semibold text-sm">
+                          Accepted
+                        </span>
+                      )}
+                      {currentStatus === "Rejected" && (
+                        <span className="px-3 py-1 rounded bg-red-100 text-red-800 font-semibold text-sm">
+                          Rejected
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-center py-5 text-gray-600">
+              No Requests Found.
+            </p>
+          )}
         </div>
       )}
     </div>

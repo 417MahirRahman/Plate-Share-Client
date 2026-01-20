@@ -73,28 +73,27 @@ const AvailableFoods = () => {
   };
 
   return (
-    <div className="mb-20">
-      <h1 className="text-center font-bold text-white my-5 lg:my-10 text-2xl md:text-3xl lg:text-5xl">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
+      <h1 className="text-center font-bold text-[#DC143C] my-8 lg:my-12 text-3xl md:text-4xl">
         ALL FOODS
       </h1>
       
       {/* Search, Sort, Filter */}
-      <div className="bg-white rounded-xl lg:mx-8 xl:mx-12 mx-3  p-4 md:p-6 shadow-sm border border-slate-200 mb-8 ">
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-200 mb-8">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-
-          <div className="text-slate-700 font-semibold text-lg">
-            Total Foods: <span className="text-red-600">({totalData})</span>
+          <div className="text-gray-700 font-semibold text-lg">
+            Total Foods: <span className="text-[#DC143C]">({totalData})</span>
           </div>
 
           {/* Search - Full width on mobile, auto width on desktop */}
           <div className="flex-1 max-w-md">
-            <label htmlFor="search" className="block text-slate-700 font-semibold text-lg mb-2 lg:hidden">
+            <label htmlFor="search" className="block text-gray-700 font-semibold text-lg mb-2 lg:hidden">
               Search:
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <svg
-                  className="w-5 h-5 text-slate-400"
+                  className="w-5 h-5 text-gray-400"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -110,7 +109,7 @@ const AvailableFoods = () => {
                 onChange={handleSearch}
                 value={searchValue}
                 type="search"
-                className="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-xl"
+                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl"
                 placeholder="Search"
               />
             </div>
@@ -119,7 +118,7 @@ const AvailableFoods = () => {
           <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
             {/* Filter */}
             <div className="flex-1 min-w-0">
-              <label className="block text-slate-700 font-semibold text-lg mb-2 lg:hidden">
+              <label className="block text-gray-700 font-semibold text-lg mb-2 lg:hidden">
                 Filter:
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -127,7 +126,7 @@ const AvailableFoods = () => {
                   name="category"
                   onChange={handleFilterChange}
                   value={filters.category}
-                  className="px-4 py-2.5 border border-slate-300 rounded-xl w-full"
+                  className="px-4 py-2.5 border border-gray-300 rounded-xl w-full"
                 >
                   <option value="">Category</option>
                   <option value="Mutton_Kacchi">Mutton Kacchi</option>
@@ -141,7 +140,7 @@ const AvailableFoods = () => {
                   name="location"
                   onChange={handleFilterChange}
                   value={filters.location}
-                  className="px-4 py-2.5 border border-slate-300 rounded-xl w-full"
+                  className="px-4 py-2.5 border border-gray-300 rounded-xl w-full"
                 >
                   <option value="">Location</option>
                   <option value="Mirpur">Mirpur</option>
@@ -160,13 +159,13 @@ const AvailableFoods = () => {
 
             {/* Sort */}
             <div className="flex-1 min-w-0">
-              <label className="block text-slate-700 font-semibold text-lg mb-2 lg:hidden">
+              <label className="block text-gray-700 font-semibold text-lg mb-2 lg:hidden">
                 Sort:
               </label>
               <select
                 onChange={handleSorting}
                 value={sort}
-                className="px-4 py-2.5 border border-slate-300 rounded-xl w-full"
+                className="px-4 py-2.5 border border-gray-300 rounded-xl w-full"
               >
                 <option value="quantity_desc">Quantity: High - Low</option>
                 <option value="quantity_asc">Quantity: Low - High</option>
@@ -177,40 +176,51 @@ const AvailableFoods = () => {
       </div>
 
       {/* Card */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-3 lg:p-5 xl:p-7 gap-6 lg:gap-8 py-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
         {data.map((food) => (
           <div
             key={food._id}
-            className="card bg-base-100 w-full lg:w-11/12 lg:mx-auto shadow-lg hover:shadow-2xl"
+            className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
           >
-            <figure className="p-7">
+            <figure className="p-3">
               <img
-                className="w-full h-[150px] lg:h-[250px] rounded-4xl object-cover"
+                className="w-full h-[140px] object-cover rounded-md"
                 src={food.foodImage}
                 alt={food.foodName}
               />
             </figure>
-            <div className="card-body px-10 mt-5">
-              <div className="flex items-center gap-2">
+            <div className="card-body px-4 pb-4">
+              <div className="flex items-center gap-2 mb-2">
                 <div className="avatar">
-                  <div className="ring-primary ring-offset-base-100 w-6 rounded-full ring-2 ring-offset-2">
-                    <img src={food.donatorImage} alt={food.donatorName} />
+                  <div className="w-7 h-7 rounded-full overflow-hidden border border-[#DC143C]">
+                    <img 
+                      src={food.donatorImage} 
+                      alt={food.donatorName} 
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 </div>
-                <h1 className="font-bold text-xl">{food.donatorName}</h1>
+                <h3 className="font-medium text-gray-800 text-sm">{food.donatorName}</h3>
               </div>
-              <h2 className="card-title font-bold text-lg">{food.foodName}</h2>
-              <h2 className="font-bold text-sm">Quantity: {food.quantity}</h2>
-              <h2 className="font-bold text-sm">
-                Expire Date: {food.expireDate}
-              </h2>
-              <h2 className="font-bold text-sm">
-                Pickup Location: {food.pickupLocation}
-              </h2>
-              <div className="card-actions">
+              <h2 className="font-bold text-gray-900 mb-2 text-base">{food.foodName}</h2>
+              <div className="space-y-1 text-xs text-gray-600">
+                <p className="flex justify-between">
+                  <span className="font-medium">Quantity:</span>
+                  <span>{food.quantity}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span className="font-medium">Expire:</span>
+                  <span>{food.expireDate}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span className="font-medium">Location:</span>
+                  <span>{food.pickupLocation}</span>
+                </p>
+              </div>
+              <div className="card-actions mt-3">
                 <Link
                   to={`/availableFoods/${food._id}`}
-                  className="btn bg-[#DC143C] text-white font-bold rounded-xl"
+                  className="w-full bg-[#DC143C] text-white font-medium py-2 rounded-md hover:bg-[#b81232] transition-colors duration-200 text-center text-sm"
                 >
                   View Details
                 </Link>
@@ -222,11 +232,11 @@ const AvailableFoods = () => {
 
       {/* Page Number - Centered */}
       {totalPage > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-12">
+        <div className="flex justify-center items-center gap-2 mt-12 pb-8">
           {currentPage > 0 && (
             <button
               onClick={() => setCurrentPage(currentPage - 1)}
-              className="px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium"
+              className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium"
             >
               Previous
             </button>
@@ -239,7 +249,7 @@ const AvailableFoods = () => {
               className={`w-10 h-10 rounded-lg font-medium ${
                 index === currentPage
                   ? "bg-[#DC143C] text-white"
-                  : "bg-white border border-slate-300 text-slate-700 hover:bg-slate-50"
+                  : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
               }`}
             >
               {index + 1}
@@ -249,7 +259,7 @@ const AvailableFoods = () => {
           {currentPage < totalPage - 1 && (
             <button
               onClick={() => setCurrentPage(currentPage + 1)}
-              className="px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium"
+              className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium"
             >
               Next
             </button>

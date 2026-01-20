@@ -39,14 +39,14 @@ const MyFoodReq = () => {
   if (loading) return <Loader />;
 
   return (
-    <div className="w-full md:w-4/5 lg:w-3/4 mx-auto mt-10 px-2 md:px-0 py-5">
-      <div className="bg-white shadow-xl rounded-xl overflow-hidden">
-        <h2 className="text-center bg-[#DC143C] text-white py-3 text-lg md:text-xl font-bold">
-          My Food Requests
-        </h2>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <h2 className="text-center text-[#DC143C] font-bold text-3xl md:text-4xl mb-8">
+        My Food Requests
+      </h2>
 
+      <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
         {data.length === 0 ? (
-          <p className="font-bold text-center p-6 text-gray-700">
+          <p className="font-bold text-center p-8 text-gray-700 text-lg">
             No Requests Found
           </p>
         ) : (
@@ -54,36 +54,39 @@ const MyFoodReq = () => {
             {data.map((request) => (
               <div
                 key={request._id}
-                className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 hover:bg-gray-50 transition gap-4"
+                className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 hover:bg-gray-50 transition-colors gap-4"
               >
                 <div className="flex items-center gap-3 text-left">
                   <img
-                    className="w-12 h-12 rounded-full object-cover"
+                    className="w-12 h-12 rounded-full object-cover border-2 border-[#DC143C]"
                     src={request.foodImage}
-                    alt="Profile"
+                    alt={request.foodname}
                   />
                   <div>
-                    <div className="font-semibold text-gray-800">
+                    <div className="font-semibold text-gray-800 text-base">
                       {request.foodname}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      Requested by: {request.Name}
                     </div>
                   </div>
                 </div>
 
                 <div className="flex mt-2 sm:mt-0">
                   {request.foodStatus === "Donated" && (
-                    <span className="px-3 py-1 rounded bg-green-100 text-green-800 font-semibold text-sm">
+                    <span className="px-3 py-1.5 rounded bg-green-100 text-green-800 font-semibold text-sm">
                       Accepted
                     </span>
                   )}
                   {request.foodStatus === "Rejected" && (
-                    <span className="px-3 py-1 rounded bg-red-100 text-red-800 font-semibold text-sm">
+                    <span className="px-3 py-1.5 rounded bg-red-100 text-red-800 font-semibold text-sm">
                       Rejected
                     </span>
                   )}
                   {request.foodStatus === "Pending" && (
                     <button
                       onClick={() => handleCancelBtn(request._id)}
-                      className="btn bg-[#DC143C] text-white rounded-xl font-bold px-4 py-2 text-sm sm:text-base hover:bg-red-600"
+                      className="bg-[#DC143C] text-white font-medium px-4 py-1.5 rounded-md hover:bg-red-600 transition-colors text-sm"
                     >
                       Cancel Request
                     </button>

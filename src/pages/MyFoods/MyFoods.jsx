@@ -6,11 +6,10 @@ import { Link } from "react-router";
 import { useForm } from "react-hook-form";
 
 const MyFoods = () => {
-  const { user, loading, setLoading } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
+  const [loading, setLoading] = useState(true)
   const [data, setData] = useState([]);
-
   const [selectedFood, setSelectedFood] = useState(null);
-
   const { register, handleSubmit, setValue, reset } = useForm();
 
   useEffect(() => {
@@ -89,159 +88,164 @@ const MyFoods = () => {
   };
 
   return (
-    <div className="mb-20">
-      <h1 className="text-center font-bold text-red-500 my-10 text-5xl">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <h1 className="text-center font-bold text-[#DC143C] my-8 text-3xl md:text-4xl">
         My Foods
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-3 lg:p-5 xl:p-7 gap-10 lg:gap-15 py-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
         {data.map((food) => (
-          <div key={food._id}>
-            <div className="card bg-base-100 w-full lg:w-11/12 lg:mx-auto shadow-lg hover:shadow-2xl">
-              <figure className="p-7">
-                <img
-                  src={food.foodImage}
-                  className="w-full h-[150px] lg:h-[250px] rounded-4xl"
-                  alt=""
-                />
-              </figure>
-
-              <div className="card-body px-10 mt-5">
-                <div className="flex items-center gap-2">
-                  <div className="avatar">
-                    <div className="ring-primary ring-offset-base-100 w-6 rounded-full ring-2 ring-offset-2">
-                      <img src={food.donatorImage} alt="" />
-                    </div>
+          <div key={food._id} className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+            <figure className="p-3">
+              <img
+                src={food.foodImage}
+                className="w-full h-[140px] object-cover rounded-md"
+                alt={food.foodName}
+              />
+            </figure>
+            <div className="card-body px-4 pb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="avatar">
+                  <div className="w-7 h-7 rounded-full overflow-hidden border border-[#DC143C]">
+                    <img 
+                      src={food.donatorImage} 
+                      alt={food.donatorName} 
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                  <h1 className="font-bold text-xl">{food.donatorName}</h1>
                 </div>
-                <h2 className="card-title font-bold text-lg">
-                  {food.foodName}
-                </h2>
-                <h2 className="font-bold text-sm">Quantity: {food.quantity}</h2>
-                <h2 className="font-bold text-sm">
-                  Expire Date: {food.expireDate}
-                </h2>
-                <h2 className="font-bold text-sm">
-                  Pickup Location: {food.pickupLocation}
-                </h2>
-
-                <div className="card-actions gap-5 mt-4">
-                  <Link
-                    to={`/availableFoods/${food._id}`}
-                    className="btn bg-[#DC143C] text-white font-bold rounded-xl"
-                  >
-                    View Details
-                  </Link>
-
-                  <button
-                    className="btn bg-[#DC143C] text-white font-bold rounded-xl"
-                    onClick={() => openModal(food)}
-                  >
-                    Update
-                  </button>
-
-                  <button
-                    className="btn bg-[#DC143C] text-white font-bold rounded-xl"
-                    onClick={() => handleDeleteBtn(food._id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-
-                {/* Modal */}
-                {selectedFood && (
-                  <div
-                    className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50"
-                    onClick={() => setSelectedFood(null)}
-                  >
-                    <div
-                      className="bg-white p-6 rounded-xl shadow-xl w-[90%] max-w-md animate-fadeIn"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <h3 className="text-2xl font-bold mb-4 text-center">
-                        Update Food
-                      </h3>
-
-                      <form
-                        onSubmit={handleSubmit((formData) =>
-                          handleUpdateBtn(selectedFood._id, formData)
-                        )}
-                        className="space-y-3"
-                      >
-                        <input
-                          readOnly
-                          value={user.displayName}
-                          className="input input-bordered w-full"
-                        />
-
-                        <input
-                          readOnly
-                          value={user.email}
-                          className="input input-bordered w-full"
-                        />
-
-                        <input
-                          {...register("foodName", { required: true })}
-                          className="input input-bordered w-full"
-                          placeholder="Food Name"
-                        />
-
-                        <input
-                          {...register("foodImage", { required: true })}
-                          className="input input-bordered w-full"
-                          placeholder="Food Image URL"
-                        />
-
-                        <input
-                          {...register("quantity", { required: true })}
-                          className="input input-bordered w-full"
-                          type="number"
-                          placeholder="Quantity"
-                        />
-
-                        <input
-                          {...register("pickupLocation", { required: true })}
-                          className="input input-bordered w-full"
-                          placeholder="Pickup Location"
-                        />
-
-                        <input
-                          {...register("expireDate", { required: true })}
-                          type="date"
-                          className="input input-bordered w-full"
-                        />
-
-                        <textarea
-                          {...register("additionalNote")}
-                          className="textarea textarea-bordered w-full"
-                          placeholder="Additional Notes"
-                        />
-
-                        <div className="flex justify-between pt-3">
-                          <button
-                            type="submit"
-                            className="btn bg-[#DC143C] text-white w-1/2 mr-2"
-                          >
-                            Update
-                          </button>
-
-                          <button
-                            type="button"
-                            className="btn w-1/2"
-                            onClick={() => {
-                              setSelectedFood(null);
-                              window.location.reload();
-                            }}
-                          >
-                            Close
-                          </button>
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                )}
+                <h3 className="font-medium text-gray-800 text-sm">{food.donatorName}</h3>
               </div>
+              <h2 className="font-bold text-gray-900 mb-2 text-base">{food.foodName}</h2>
+              <div className="space-y-1 text-xs text-gray-600">
+                <p className="flex justify-between">
+                  <span className="font-medium">Quantity:</span>
+                  <span>{food.quantity}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span className="font-medium">Expire:</span>
+                  <span>{food.expireDate}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span className="font-medium">Location:</span>
+                  <span>{food.pickupLocation}</span>
+                </p>
+              </div>
+              <div className="card-actions mt-3 flex flex-col sm:flex-row gap-2">
+                <Link
+                  to={`/availableFoods/${food._id}`}
+                  className="w-full bg-[#DC143C] text-white font-medium py-2 rounded-md hover:bg-[#b81232] transition-colors duration-200 text-center text-sm"
+                >
+                  View Details
+                </Link>
+                <button
+                  className="w-full bg-[#DC143C] text-white font-medium py-2 rounded-md hover:bg-[#b81232] transition-colors duration-200 text-center text-sm"
+                  onClick={() => openModal(food)}
+                >
+                  Update
+                </button>
+                <button
+                  className="w-full bg-[#DC143C] text-white font-medium py-2 rounded-md hover:bg-red-600 transition-colors duration-200 text-center text-sm"
+                  onClick={() => handleDeleteBtn(food._id)}
+                >
+                  Delete
+                </button>
+              </div>
+
+              {/* Modal */}
+              {selectedFood && selectedFood._id === food._id && (
+                <div
+                  className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50"
+                  onClick={() => setSelectedFood(null)}
+                >
+                  <div
+                    className="bg-white p-6 rounded-xl shadow-xl w-[90%] max-w-md animate-fadeIn"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <h3 className="text-xl font-bold mb-4 text-center text-gray-800">
+                      Update Food
+                    </h3>
+
+                    <form
+                      onSubmit={handleSubmit((formData) =>
+                        handleUpdateBtn(selectedFood._id, formData)
+                      )}
+                      className="space-y-3"
+                    >
+                      <input
+                        readOnly
+                        value={user.displayName}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-700"
+                      />
+
+                      <input
+                        readOnly
+                        value={user.email}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-700"
+                      />
+
+                      <input
+                        {...register("foodName", { required: true })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#DC143C] focus:border-transparent"
+                        placeholder="Food Name"
+                      />
+
+                      <input
+                        {...register("foodImage", { required: true })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#DC143C] focus:border-transparent"
+                        placeholder="Food Image URL"
+                      />
+
+                      <input
+                        {...register("quantity", { required: true })}
+                        type="number"
+                        min="1"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#DC143C] focus:border-transparent"
+                        placeholder="Quantity"
+                      />
+
+                      <input
+                        {...register("pickupLocation", { required: true })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#DC143C] focus:border-transparent"
+                        placeholder="Pickup Location"
+                      />
+
+                      <input
+                        {...register("expireDate", { required: true })}
+                        type="date"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#DC143C] focus:border-transparent"
+                      />
+
+                      <textarea
+                        {...register("additionalNote")}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#DC143C] focus:border-transparent"
+                        placeholder="Additional Notes"
+                        rows="3"
+                      />
+
+                      <div className="flex justify-between pt-3 gap-2">
+                        <button
+                          type="submit"
+                          className="flex-1 bg-[#DC143C] text-white py-2 rounded-lg hover:bg-[#b81232] transition-colors"
+                        >
+                          Update
+                        </button>
+
+                        <button
+                          type="button"
+                          className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+                          onClick={() => {
+                            setSelectedFood(null);
+                            reset();
+                          }}
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         ))}

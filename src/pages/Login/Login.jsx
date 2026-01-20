@@ -18,6 +18,7 @@ const Login = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm();
 
@@ -77,6 +78,17 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
+  // Demo Login
+  const handleDemoLogin = () => {
+    setValue("email", "aliraja@gmail.com");
+    setValue("password", "Ali12345");
+
+    loginMutation.mutate({
+      email: "aliraja@gmail.com",
+      password: "Ali12345",
+    });
+  };
+
   return (
     <div className="flex flex-col items-center py-7 mb-10">
       <h1 className="text-center font-bold text-white mb-5 lg:my-10 text-2xl md:text-3xl lg:text-5xl">Login Now</h1>
@@ -115,6 +127,16 @@ const Login = () => {
 
           <button type="submit" className="btn bg-[#DC143C] text-white font-bold rounded-xl">
             Login
+          </button>
+
+          {/* Demo Login */}
+
+          <button
+            type="button"
+            onClick={handleDemoLogin}
+            className="btn bg-[#DC143C] text-white font-bold rounded-xl"
+          >
+            Demo Login
           </button>
 
           <button

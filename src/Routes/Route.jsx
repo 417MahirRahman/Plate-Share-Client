@@ -12,9 +12,10 @@ import AllFood from "../pages/AvailableFood/AllFood";
 import MyFoods from "../pages/MyFoods/MyFoods";
 import MyFoodReq from "../pages/MyFoodReq/MyFoodReq";
 import DetailsNotFound from "../pages/ErrorPage/DetailsNotFound";
-import Dashboard from "../pages/Roots/Dashboard";
+import DashboardLayout from "../pages/Roots/DashboardLayout";
 import About from "../pages/AboutUs/About"
 import Profile from "../pages/MyProfile/Profile";
+import Dashboard from "../pages/Roots/Dashboard";
 
 export const router = createBrowserRouter([
   {
@@ -75,19 +76,23 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: "/dashboard",
+    path: "/dashboardLayout",
     element: (
       <PrivateRoute>
-        <Dashboard></Dashboard>
+        <DashboardLayout></DashboardLayout>
       </PrivateRoute>
     ),
     children: [
       {
-        path: "/dashboard/myFood",
+        index: true,
+        element: <Dashboard></Dashboard>
+      },
+      {
+        path: "/dashboardLayout/myFood",
         element: <MyFoods></MyFoods>,
       },
       {
-        path: "/dashboard/myFoodReq",
+        path: "/dashboardLayout/myFoodReq",
         element: <MyFoodReq></MyFoodReq>,
       },
     ],
