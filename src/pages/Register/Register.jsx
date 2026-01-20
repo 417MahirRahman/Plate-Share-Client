@@ -112,7 +112,6 @@ const Register = () => {
           <input
             type="text"
             className="input w-full"
-            placeholder="Your Name"
             {...register("name", { required: "Name is required" })}
           />
           {errors.name && (
@@ -123,7 +122,6 @@ const Register = () => {
           <input
             type="text"
             className="input w-full"
-            placeholder="Image-URL"
             {...register("Image_URL", { required: "Image URL is required" })}
           />
           {errors.Image_URL && (
@@ -134,7 +132,6 @@ const Register = () => {
           <input
             type="email"
             className="input w-full"
-            placeholder="Email"
             {...register("email", { required: "Email is required" })}
           />
           {errors.email && (
@@ -146,7 +143,6 @@ const Register = () => {
             <input
               type={showPassword ? "text" : "password"}
               className="input w-full"
-              placeholder="Password"
               {...register("password", {
                 required: "Password is required",
               })}

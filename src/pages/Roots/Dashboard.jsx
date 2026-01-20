@@ -14,21 +14,21 @@ import {
 import { motion } from "framer-motion";
 
 const summaryData = [
-  { title: "Total Foods", value: 24 },
-  { title: "Available Foods", value: 14 },
-  { title: "Donated Foods", value: 10 },
-  { title: "Total Requests", value: 18 },
+  { title: "Total Foods", value: 3 },
+  { title: "Available Foods", value: 1 },
+  { title: "Donated Foods", value: 2 },
+  { title: "Total Requests", value: 2 },
 ];
 
 const foodStatusData = [
-  { name: "Available", value: 14 },
-  { name: "Donated", value: 10 },
+  { name: "Available", value: 1 },
+  { name: "Donated", value: 2 },
 ];
 
 const requestStatusData = [
-  { name: "Pending", count: 6 },
-  { name: "Accepted", count: 8 },
-  { name: "Rejected", count: 4 },
+  { name: "Pending", count: 0 },
+  { name: "Accepted", count: 2 },
+  { name: "Rejected", count: 0 },
 ];
 
 const foodAddedData = [
@@ -78,6 +78,8 @@ const Dashboard = () => {
                   fill="#DC143C"
                   stroke="#fff"
                   strokeWidth={2}
+                  label={({ name, value }) => `${name}: ${value}`}
+                  labelStyle={{ fill: "#ffffff" }}
                 />
                 <Tooltip
                   contentStyle={{

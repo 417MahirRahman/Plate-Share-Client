@@ -26,10 +26,10 @@ const Service = () => {
   ];
 
   return (
-    <section className="py-16 px-4">
+    <section className="py-16 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
         <motion.h2 
-          className="text-2xl md:text-4xl font-bold text-center mb-12 text-white"
+          className="text-2xl md:text-4xl font-bold text-center mb-12 text-[#DC143C]"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -42,7 +42,7 @@ const Service = () => {
           {services.map((service, index) => (
             <motion.div
               key={index}
-              className="bg-white p-8 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
+              className="bg-white p-8 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300"
               initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}

@@ -99,7 +99,6 @@ const Login = () => {
           <input
             type="email"
             className="input w-full"
-            placeholder="Email"
             {...register("email", { required: "Email is required" })}
           />
           {errors.email && (
@@ -111,7 +110,6 @@ const Login = () => {
             <input
               type={showPassword ? "text" : "password"}
               className="input w-full"
-              placeholder="Password"
               {...register("password", { required: "Password is required" })}
             />
             <button

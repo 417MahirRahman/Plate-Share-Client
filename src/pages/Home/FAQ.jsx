@@ -36,10 +36,10 @@ const FAQ = () => {
   ];
 
   return (
-    <section className="py-16 px-4">
+    <section className="py-16 px-4 bg-white">
       <div className="max-w-4xl mx-auto">
         <motion.h2
-          className="text-2xl md:text-4xl font-bold text-center mb-12 text-white"
+          className="text-2xl md:text-4xl font-bold text-center mb-12 text-[#DC143C]"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -52,7 +52,7 @@ const FAQ = () => {
           {faqs.map((faq, index) => (
             <motion.div
               key={index}
-              className="bg-white p-6 rounded-lg border border-gray-200"
+              className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
